@@ -1,1 +1,1 @@
-# irent-backend
+# IRent Backend
