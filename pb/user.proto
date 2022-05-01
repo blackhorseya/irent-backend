@@ -1,0 +1,9 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb;pb";
+
+message Profile {
+  string id = 1;
+  string name = 2;
+  string access_token = 3;
+}

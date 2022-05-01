@@ -1,0 +1,14 @@
+app:
+  name: irent
+  endpoint: https://irentcar-app.azurefd.net/api
+  appVersion: "5.8.1"
+
+http:
+  port: 8080
+  mode: debug
+
+log:
+  level: debug
+
+runner:
+  interval: 10s

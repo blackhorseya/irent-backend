@@ -1,0 +1,426 @@
+basePath: /api
+definitions:
+  booking.bookRequest:
+    properties:
+      id:
+        type: string
+      project_id:
+        type: string
+    type: object
+  er.APPError:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+    type: object
+  pb.Arrears:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/pb.ArrearsRecord'
+        type: array
+      total_amount:
+        type: integer
+    type: object
+  pb.ArrearsRecord:
+    properties:
+      order_no:
+        type: string
+      total_amount:
+        type: integer
+    type: object
+  pb.Booking:
+    properties:
+      last_pick_at:
+        type: integer
+      "no":
+        type: string
+    type: object
+  pb.Car:
+    properties:
+      car_of_area:
+        type: string
+      car_type:
+        type: string
+      car_type_name:
+        type: string
+      distance:
+        type: number
+      id:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      project_id:
+        type: string
+      project_name:
+        type: string
+      seat:
+        type: integer
+    type: object
+  pb.OrderInfo:
+    properties:
+      car_id:
+        type: string
+      car_latitude:
+        type: number
+      car_longitude:
+        type: number
+      end_at:
+        type: integer
+      "no":
+        type: string
+      start_at:
+        type: integer
+      stop_pick_at:
+        type: integer
+    type: object
+  pb.Profile:
+    properties:
+      access_token:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+info:
+  contact:
+    email: blackhorseya@gmail.com
+    name: Sean Cheng
+    url: https://blog.seancheng.space
+  description: IRent API
+  license:
+    name: GPL-3.0
+    url: https://spdx.org/licenses/GPL-3.0-only.html
+  title: IRent API
+  version: 0.0.1
+paths:
+  /liveness:
+    get:
+      consumes:
+      - application/json
+      description: to know when to restart an application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      summary: Liveness
+      tags:
+      - Health
+  /readiness:
+    get:
+      consumes:
+      - application/json
+      description: Show application was ready to start accepting traffic
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      summary: Readiness
+      tags:
+      - Health
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Login
+      parameters:
+      - description: user id
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: user password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/pb.Profile'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      summary: Login
+      tags:
+      - Auth
+  /v1/billing/{id}/arrears:
+    get:
+      consumes:
+      - application/json
+      description: Get arrears by user's id
+      parameters:
+      - description: ID of user
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pb.Arrears'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get arrears by user's id
+      tags:
+      - Billing
+  /v1/bookings:
+    get:
+      consumes:
+      - application/json
+      description: List all bookings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pb.OrderInfo'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      security:
+      - ApiKeyAuth: []
+      summary: List all bookings
+      tags:
+      - Bookings
+    post:
+      consumes:
+      - application/json
+      description: Book a car
+      parameters:
+      - description: information of car
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/booking.bookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/pb.Booking'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Book a car
+      tags:
+      - Bookings
+  /v1/bookings/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Cancel a booking by id
+      parameters:
+      - description: ID of booking
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel a booking by id
+      tags:
+      - Bookings
+    get:
+      consumes:
+      - application/json
+      description: Get a booking by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/pb.OrderInfo'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a booking by id
+      tags:
+      - Bookings
+  /v1/cars:
+    get:
+      consumes:
+      - application/json
+      description: List closer car
+      parameters:
+      - default: 10
+        description: "n"
+        in: query
+        name: "n"
+        type: integer
+      - default: 0
+        description: latitude
+        in: query
+        name: latitude
+        type: number
+      - default: 0
+        description: longitude
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pb.Car'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/er.APPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/er.APPError'
+      summary: List closer car
+      tags:
+      - Cars
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

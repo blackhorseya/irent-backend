@@ -1,0 +1,8 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb;pb";
+
+message Booking {
+  string no = 1;
+  int64 last_pick_at = 2;
+}

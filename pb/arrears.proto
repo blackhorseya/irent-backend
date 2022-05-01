@@ -1,0 +1,13 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb;pb";
+
+message ArrearsRecord {
+  string order_no = 1;
+  int32 total_amount = 2;
+}
+
+message Arrears {
+  repeated ArrearsRecord records = 1;
+  int32 total_amount = 2;
+}
