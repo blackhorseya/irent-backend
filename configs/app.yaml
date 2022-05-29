@@ -9,6 +9,4 @@ http:
 
 log:
   level: debug
-
-runner:
-  interval: 10s
+  encoding: console
