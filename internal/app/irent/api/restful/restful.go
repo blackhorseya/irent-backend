@@ -1,11 +1,11 @@
-package apis
+package restful
 
 import (
-	"github.com/blackhorseya/irent/internal/app/irent/apis/billing"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/booking"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/cars"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/health"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/user"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/billing"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/booking"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/cars"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/health"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/user"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http/middlewares"
 	"github.com/gin-gonic/gin"

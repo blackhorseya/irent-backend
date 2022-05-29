@@ -6,7 +6,7 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/config"
 	"github.com/blackhorseya/gocommon/pkg/log"
 	"github.com/blackhorseya/irent/internal/app/irent"
-	"github.com/blackhorseya/irent/internal/app/irent/apis"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful"
 	"github.com/blackhorseya/irent/internal/app/irent/biz"
 	"github.com/blackhorseya/irent/internal/pkg/app"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
@@ -18,7 +18,7 @@ var providerSet = wire.NewSet(
 	log.ProviderSet,
 	http.ProviderSet,
 	irent.ProviderSet,
-	apis.ProviderSet,
+	restful.ProviderSet,
 	biz.ProviderSet,
 )
 

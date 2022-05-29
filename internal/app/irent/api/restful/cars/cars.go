@@ -5,7 +5,7 @@ import (
 	"github.com/google/wire"
 )
 
-// IHandler declare apis handler's function
+// IHandler declare api handler's function
 type IHandler interface {
 	// NearTopN serve caller to list closer car
 	NearTopN(c *gin.Context)

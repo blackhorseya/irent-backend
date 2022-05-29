@@ -5,7 +5,7 @@ import (
 	"github.com/google/wire"
 )
 
-// IHandler declare apis handler's function
+// IHandler declare api handler's function
 type IHandler interface {
 	// Login serve caller to login the system
 	Login(c *gin.Context)

@@ -10,12 +10,12 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/config"
 	"github.com/blackhorseya/gocommon/pkg/log"
 	"github.com/blackhorseya/irent/internal/app/irent"
-	"github.com/blackhorseya/irent/internal/app/irent/apis"
-	billing2 "github.com/blackhorseya/irent/internal/app/irent/apis/billing"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/booking"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/cars"
-	"github.com/blackhorseya/irent/internal/app/irent/apis/health"
-	user2 "github.com/blackhorseya/irent/internal/app/irent/apis/user"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful"
+	billing2 "github.com/blackhorseya/irent/internal/app/irent/api/restful/billing"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/booking"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/cars"
+	"github.com/blackhorseya/irent/internal/app/irent/api/restful/health"
+	user2 "github.com/blackhorseya/irent/internal/app/irent/api/restful/user"
 	"github.com/blackhorseya/irent/internal/app/irent/biz"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing"
 	repo3 "github.com/blackhorseya/irent/internal/app/irent/biz/billing/repo"
@@ -83,7 +83,7 @@ func CreateApp(path2 string) (*app.Application, error) {
 	iRepo3 := repo4.NewImpl(options4)
 	orderIBiz := order.NewImpl(logger, iRepo3)
 	bookingIHandler := booking.NewImpl(logger, orderIBiz)
-	initHandlers := apis.CreateInitHandlerFn(iHandler, carsIHandler, userIHandler, billingIHandler, bookingIHandler)
+	initHandlers := restful.CreateInitHandlerFn(iHandler, carsIHandler, userIHandler, billingIHandler, bookingIHandler)
 	engine := http.NewRouter(httpOptions, logger, initHandlers)
 	server, err := http.New(httpOptions, logger, engine)
 	if err != nil {
@@ -98,4 +98,4 @@ func CreateApp(path2 string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, irent.ProviderSet, apis.ProviderSet, biz.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, irent.ProviderSet, restful.ProviderSet, biz.ProviderSet)
