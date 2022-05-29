@@ -11,13 +11,13 @@ import (
 //go:generate mockery --name=IRepo
 type IRepo interface {
 	// QueryBookings serve caller to query all bookings
-	QueryBookings(ctx contextx.Contextx, user *user.Profile) (orders []*pb.OrderInfo, err error)
+	QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*pb.OrderInfo, err error)
 
 	// Book serve caller to book a car
-	Book(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error)
+	Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *pb.Booking, err error)
 
 	// CancelBooking serve caller to cancel a booking by id
-	CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error)
+	CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error)
 }
 
 // ProviderSet is a provider set for wire

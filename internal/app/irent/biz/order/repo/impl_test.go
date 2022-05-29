@@ -3,6 +3,7 @@
 package repo
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
 
@@ -12,12 +13,12 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type repoSuite struct {
+type suiteRepo struct {
 	suite.Suite
 	repo IRepo
 }
 
-func (s *repoSuite) SetupTest() {
+func (s *suiteRepo) SetupTest() {
 	repo, err := CreateIRepo(&Options{
 		Endpoint:   "https://irentcar-app.azurefd.net/api",
 		AppVersion: "5.8.1",
@@ -29,13 +30,13 @@ func (s *repoSuite) SetupTest() {
 	s.repo = repo
 }
 
-func TestRepoSuite(t *testing.T) {
-	suite.Run(t, new(repoSuite))
+func TestSuiteRepo(t *testing.T) {
+	suite.Run(t, new(suiteRepo))
 }
 
-func (s *repoSuite) Test_impl_QueryBookings() {
+func (s *suiteRepo) Test_impl_QueryBookings() {
 	type args struct {
-		user *pb.Profile
+		from *user.Profile
 	}
 	tests := []struct {
 		name       string
@@ -45,14 +46,14 @@ func (s *repoSuite) Test_impl_QueryBookings() {
 	}{
 		{
 			name:       "query bookings then success",
-			args:       args{user: testdata.User1},
+			args:       args{from: testdata.User1},
 			wantOrders: nil,
 			wantErr:    false,
 		},
 	}
 	for _, tt := range tests {
 		s.T().Run(tt.name, func(t *testing.T) {
-			gotOrders, err := s.repo.QueryBookings(contextx.Background(), tt.args.user)
+			gotOrders, err := s.repo.QueryBookings(contextx.Background(), tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("QueryBookings() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -64,10 +65,10 @@ func (s *repoSuite) Test_impl_QueryBookings() {
 	}
 }
 
-func (s *repoSuite) Test_impl_CancelBooking() {
+func (s *suiteRepo) Test_impl_CancelBooking() {
 	type args struct {
 		id   string
-		user *pb.Profile
+		from *user.Profile
 	}
 	tests := []struct {
 		name    string
@@ -76,24 +77,24 @@ func (s *repoSuite) Test_impl_CancelBooking() {
 	}{
 		{
 			name:    "cancel booking then success",
-			args:    args{id: testdata.Order1.No, user: testdata.User1},
+			args:    args{id: testdata.Order1.No, from: testdata.User1},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		s.T().Run(tt.name, func(t *testing.T) {
-			if err := s.repo.CancelBooking(contextx.Background(), tt.args.id, tt.args.user); (err != nil) != tt.wantErr {
+			if err := s.repo.CancelBooking(contextx.Background(), tt.args.id, tt.args.from); (err != nil) != tt.wantErr {
 				t.Errorf("CancelBooking() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func (s *repoSuite) Test_impl_Book() {
+func (s *suiteRepo) Test_impl_Book() {
 	type args struct {
 		id     string
 		projID string
-		user   *pb.Profile
+		from   *user.Profile
 	}
 	tests := []struct {
 		name     string
@@ -103,14 +104,14 @@ func (s *repoSuite) Test_impl_Book() {
 	}{
 		{
 			name:     "book car then success",
-			args:     args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: testdata.User1},
+			args:     args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1},
 			wantInfo: nil,
 			wantErr:  false,
 		},
 	}
 	for _, tt := range tests {
 		s.T().Run(tt.name, func(t *testing.T) {
-			gotInfo, err := s.repo.Book(contextx.Background(), tt.args.id, tt.args.projID, tt.args.user)
+			gotInfo, err := s.repo.Book(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Book() error = %v, wantErr %v", err, tt.wantErr)
 				return

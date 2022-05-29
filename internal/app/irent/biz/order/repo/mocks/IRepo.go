@@ -18,13 +18,13 @@ type IRepo struct {
 	mock.Mock
 }
 
-// Book provides a mock function with given fields: ctx, id, projID, _a3
-func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, _a3 *user.Profile) (*pb.Booking, error) {
-	ret := _m.Called(ctx, id, projID, _a3)
+// Book provides a mock function with given fields: ctx, id, projID, from
+func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*pb.Booking, error) {
+	ret := _m.Called(ctx, id, projID, from)
 
 	var r0 *pb.Booking
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *pb.Booking); ok {
-		r0 = rf(ctx, id, projID, _a3)
+		r0 = rf(ctx, id, projID, from)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*pb.Booking)
@@ -33,7 +33,7 @@ func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, _a3 *user
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile) error); ok {
-		r1 = rf(ctx, id, projID, _a3)
+		r1 = rf(ctx, id, projID, from)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,13 +41,13 @@ func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, _a3 *user
 	return r0, r1
 }
 
-// CancelBooking provides a mock function with given fields: ctx, id, _a2
-func (_m *IRepo) CancelBooking(ctx contextx.Contextx, id string, _a2 *user.Profile) error {
-	ret := _m.Called(ctx, id, _a2)
+// CancelBooking provides a mock function with given fields: ctx, id, from
+func (_m *IRepo) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) error {
+	ret := _m.Called(ctx, id, from)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, *user.Profile) error); ok {
-		r0 = rf(ctx, id, _a2)
+		r0 = rf(ctx, id, from)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -55,13 +55,13 @@ func (_m *IRepo) CancelBooking(ctx contextx.Contextx, id string, _a2 *user.Profi
 	return r0
 }
 
-// QueryBookings provides a mock function with given fields: ctx, _a1
-func (_m *IRepo) QueryBookings(ctx contextx.Contextx, _a1 *user.Profile) ([]*pb.OrderInfo, error) {
-	ret := _m.Called(ctx, _a1)
+// QueryBookings provides a mock function with given fields: ctx, from
+func (_m *IRepo) QueryBookings(ctx contextx.Contextx, from *user.Profile) ([]*pb.OrderInfo, error) {
+	ret := _m.Called(ctx, from)
 
 	var r0 []*pb.OrderInfo
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, *user.Profile) []*pb.OrderInfo); ok {
-		r0 = rf(ctx, _a1)
+		r0 = rf(ctx, from)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*pb.OrderInfo)
@@ -70,7 +70,7 @@ func (_m *IRepo) QueryBookings(ctx contextx.Contextx, _a1 *user.Profile) ([]*pb.
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(contextx.Contextx, *user.Profile) error); ok {
-		r1 = rf(ctx, _a1)
+		r1 = rf(ctx, from)
 	} else {
 		r1 = ret.Error(1)
 	}

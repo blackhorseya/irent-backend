@@ -4,17 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/base/timex"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"net/http"
+	"strings"
 )
 
 // Options declare app's configuration
@@ -46,17 +43,14 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) QueryBookings(ctx contextx.Contextx, user *user.Profile) (orders []*pb.OrderInfo, err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*pb.OrderInfo, err error) {
 	url := fmt.Sprintf("%s/BookingQuery", i.o.Endpoint)
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", user.AccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -65,23 +59,18 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, user *user.Profile) (orders 
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	var data *QueryBookingsResp
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	var res *QueryBookingsResp
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.ErrorMessage != "Success" {
-		return nil, errors.New(res.ErrorMessage)
+	if data.ErrorMessage != "Success" {
+		return nil, errors.New(data.ErrorMessage)
 	}
 
 	var ret []*pb.OrderInfo
-	for _, o := range res.Data.OrderObj {
+	for _, o := range data.Data.OrderObj {
 		info := &pb.OrderInfo{
 			No:           o.OrderNo,
 			CarId:        strings.ReplaceAll(o.CarNo, " ", ""),
@@ -98,18 +87,15 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, user *user.Profile) (orders 
 	return ret, nil
 }
 
-func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
-
+func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *pb.Booking, err error) {
 	url := fmt.Sprintf("%s/Booking", i.o.Endpoint)
 	payload, _ := json.Marshal(&BookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", user.AccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -118,39 +104,31 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *user.Profile
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	var data *BookResp
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	var res *BookResp
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.ErrorMessage != "Success" {
-		return nil, errors.New(res.ErrorMessage)
+	if data.ErrorMessage != "Success" {
+		return nil, errors.New(data.ErrorMessage)
 	}
 
 	return &pb.Booking{
-		No:         res.Data.OrderNo,
-		LastPickAt: timex.ParseYYYYMMddHHmmss(res.Data.LastPickTime).UnixNano(),
+		No:         data.Data.OrderNo,
+		LastPickAt: timex.ParseYYYYMMddHHmmss(data.Data.LastPickTime).UnixNano(),
 	}, nil
 }
 
-func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error) {
 	url := fmt.Sprintf("%s/BookingCancel", i.o.Endpoint)
 	payload, _ := json.Marshal(&CancelBookingReq{OrderNo: id})
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", user.AccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -159,19 +137,14 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *user.Profil
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	var data *CancelBookingResp
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return err
 	}
 
-	var res *CancelBookingResp
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return err
-	}
-
-	if res.ErrorMessage != "Success" {
-		return errors.New(res.ErrorMessage)
+	if data.ErrorMessage != "Success" {
+		return errors.New(data.ErrorMessage)
 	}
 
 	return nil

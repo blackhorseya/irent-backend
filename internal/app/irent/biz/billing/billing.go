@@ -10,7 +10,7 @@ import (
 // IBiz declare arrears service function
 //go:generate mockery --name=IBiz
 type IBiz interface {
-	// GetArrears serve caller to given from then get from's arrears information
+	// GetArrears serve caller to given from then get user's arrears information
 	GetArrears(ctx contextx.Contextx, user *user.Profile) (info *user.Arrears, err error)
 }
 
