@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/er"
 	"net/http"
 
-	"github.com/blackhorseya/irent/internal/pkg/entity/er"
 	"github.com/gin-gonic/gin"
 )
 
