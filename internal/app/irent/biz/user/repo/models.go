@@ -1,4 +1,8 @@
-package models
+package repo
+
+import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+)
 
 // LoginReq declare irent api login request struct
 type LoginReq struct {
@@ -60,4 +64,12 @@ type LoginResp struct {
 			SIGNATURE      string `json:"SIGNATURE"`
 		} `json:"UserData"`
 	} `json:"Data"`
+}
+
+func newProfileFromResp(resp *LoginResp) *user.Profile {
+	return &user.Profile{
+		ID:          resp.Data.UserData.MEMIDNO,
+		Name:        resp.Data.UserData.MEMCNAME,
+		AccessToken: resp.Data.Token.AccessToken,
+	}
 }

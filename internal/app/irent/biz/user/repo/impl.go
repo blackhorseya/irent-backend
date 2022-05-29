@@ -4,16 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"time"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/internal/app/irent/biz/user/repo/models"
-	"github.com/blackhorseya/irent/pb"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 // Options declare app's configuration
@@ -45,12 +41,9 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *pb.Profile, err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *user.Profile, err error) {
 	url := fmt.Sprintf("%s/Login", i.o.Endpoint)
-	payload, err := json.Marshal(&models.LoginReq{
+	payload, err := json.Marshal(&LoginReq{
 		IDNO:       id,
 		DeviceID:   uuid.New().String(),
 		App:        "1",
@@ -61,7 +54,7 @@ func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *pb.Profi
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -74,24 +67,15 @@ func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *pb.Profi
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	var data *LoginResp
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	var res *models.LoginResp
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return nil, err
+	if data.ErrorMessage != "Success" {
+		return nil, errors.New(data.ErrorMessage)
 	}
 
-	if res.ErrorMessage != "Success" {
-		return nil, errors.New(res.ErrorMessage)
-	}
-
-	return &pb.Profile{
-		Id:          res.Data.UserData.MEMIDNO,
-		Name:        res.Data.UserData.MEMCNAME,
-		AccessToken: res.Data.Token.AccessToken,
-	}, nil
+	return newProfileFromResp(data), nil
 }
