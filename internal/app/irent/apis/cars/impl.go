@@ -1,13 +1,13 @@
 package cars
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"net/http"
 	"strconv"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/car"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/internal/pkg/entity/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

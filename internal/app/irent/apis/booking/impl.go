@@ -1,12 +1,12 @@
 package booking
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"net/http"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/internal/pkg/entity/response"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

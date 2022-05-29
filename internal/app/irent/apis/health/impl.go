@@ -1,9 +1,9 @@
 package health
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"net/http"
 
-	"github.com/blackhorseya/irent/internal/pkg/entity/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
