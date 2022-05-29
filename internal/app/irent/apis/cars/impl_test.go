@@ -3,13 +3,13 @@ package cars
 import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
+	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/blackhorseya/irent/internal/app/irent/biz/car/mocks"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
@@ -17,14 +17,14 @@ import (
 	"go.uber.org/zap"
 )
 
-type handlerSuite struct {
+type suiteHandler struct {
 	suite.Suite
 	r       *gin.Engine
 	mock    *mocks.IBiz
 	handler IHandler
 }
 
-func (s *handlerSuite) SetupTest() {
+func (s *suiteHandler) SetupTest() {
 	logger, _ := zap.NewDevelopment()
 
 	gin.SetMode(gin.TestMode)
@@ -42,15 +42,15 @@ func (s *handlerSuite) SetupTest() {
 	s.handler = handler
 }
 
-func (s *handlerSuite) TearDownTest() {
+func (s *suiteHandler) TearDownTest() {
 	s.mock.AssertExpectations(s.T())
 }
 
-func TestHandlerSuite(t *testing.T) {
-	suite.Run(t, new(handlerSuite))
+func TestSuiteHandler(t *testing.T) {
+	suite.Run(t, new(suiteHandler))
 }
 
-func (s *handlerSuite) Test_impl_NearTopN() {
+func (s *suiteHandler) Test_impl_NearTopN() {
 	s.r.GET("/api/v1/car/near", s.handler.NearTopN)
 
 	type args struct {
@@ -89,7 +89,7 @@ func (s *handlerSuite) Test_impl_NearTopN() {
 		{
 			name: "near then success",
 			args: args{n: "10", latitude: "0", longitude: "0", mock: func() {
-				s.mock.On("NearTopN", mock.Anything, 10, float64(0), float64(0)).Return([]*pb.Car{testdata.Car1}, 5, nil).Once()
+				s.mock.On("NearTopN", mock.Anything, 10, float64(0), float64(0)).Return([]*car.Info{testdata.Car1}, 5, nil).Once()
 			}},
 			wantCode: 200,
 		},

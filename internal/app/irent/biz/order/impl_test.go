@@ -207,28 +207,28 @@ func (s *bizSuite) Test_impl_BookCar() {
 		},
 		{
 			name:     "missing project id then error",
-			args:     args{id: testdata.Car1.Id, projID: "", user: testdata.User1},
+			args:     args{id: testdata.Car1.ID, projID: "", user: testdata.User1},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: &user.Profile{}},
+			args:     args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: &user.Profile{}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "book then error",
-			args: args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
-				s.mock.On("Book", mock.Anything, testdata.Car1.Id, testdata.ProjID1, testdata.User1).Return(nil, errors.New("error")).Once()
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
+				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(nil, errors.New("error")).Once()
 			}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "book then success",
-			args: args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
-				s.mock.On("Book", mock.Anything, testdata.Car1.Id, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
+				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
 			}},
 			wantInfo: testdata.Booking1,
 			wantErr:  false,
@@ -272,20 +272,20 @@ func (s *bizSuite) Test_impl_CancelBooking() {
 		},
 		{
 			name:    "missing token then error",
-			args:    args{id: testdata.Car1.Id, user: &user.Profile{}},
+			args:    args{id: testdata.Car1.ID, user: &user.Profile{}},
 			wantErr: true,
 		},
 		{
 			name: "cancel booking then error",
-			args: args{id: testdata.Car1.Id, user: testdata.User1, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.Id, testdata.User1).Return(errors.New("error")).Once()
+			args: args{id: testdata.Car1.ID, user: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(errors.New("error")).Once()
 			}},
 			wantErr: true,
 		},
 		{
 			name: "cancel booking then success",
-			args: args{id: testdata.Car1.Id, user: testdata.User1, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.Id, testdata.User1).Return(nil).Once()
+			args: args{id: testdata.Car1.ID, user: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
 			}},
 			wantErr: false,
 		},

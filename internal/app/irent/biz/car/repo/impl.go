@@ -4,14 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"time"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/pb"
+	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 // Options declare app's configuration
@@ -42,47 +38,7 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-type listReq struct {
-	Radius    float64 `json:"Radius"`
-	Latitude  float64 `json:"Latitude"`
-	Longitude float64 `json:"Longitude"`
-	ShowAll   int     `json:"ShowALL"`
-}
-
-type listResp struct {
-	Result       string `json:"Result"`
-	ErrorCode    string `json:"ErrorCode"`
-	NeedRelogin  int    `json:"NeedRelogin"`
-	NeedUpgrade  int    `json:"NeedUpgrade"`
-	Errormessage string `json:"ErrorMessage"`
-	Data         struct {
-		AnyRentObj []struct {
-			CarNo          string  `json:"CarNo"`
-			CarType        string  `json:"CarType"`
-			CarTypeName    string  `json:"CarTypeName"`
-			CarOfArea      string  `json:"CarOfArea"`
-			ProjectName    string  `json:"ProjectName"`
-			Rental         float64 `json:"Rental"`
-			Mileage        float64 `json:"Mileage"`
-			Insurance      int     `json:"Insurance"`
-			InsurancePrice int     `json:"InsurancePrice"`
-			ShowSpecial    int     `json:"ShowSpecial"`
-			SpecialInfo    string  `json:"SpecialInfo"`
-			Latitude       float64 `json:"Latitude"`
-			Longitude      float64 `json:"Longitude"`
-			Operator       string  `json:"Operator"`
-			OperatorScore  float64 `json:"OperatorScore"`
-			CarTypePic     string  `json:"CarTypePic"`
-			Seat           int     `json:"Seat"`
-			ProjID         string  `json:"ProjID"`
-		} `json:"AnyRentObj"`
-	} `json:"Data"`
-}
-
-func (i *impl) List(ctx contextx.Contextx) (cars []*pb.Car, err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (i *impl) List(ctx contextx.Contextx) (cars []*car.Info, err error) {
 	url := fmt.Sprintf("%s/AnyRent", i.o.Endpoint)
 	payload, err := json.Marshal(&listReq{
 		Radius:    1.5,
@@ -94,7 +50,7 @@ func (i *impl) List(ctx contextx.Contextx) (cars []*pb.Car, err error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
@@ -107,30 +63,15 @@ func (i *impl) List(ctx contextx.Contextx) (cars []*pb.Car, err error) {
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var list *listResp
-	err = json.Unmarshal(data, &list)
+	err = json.NewDecoder(resp.Body).Decode(&list)
 	if err != nil {
 		return nil, err
 	}
 
-	var ret []*pb.Car
+	var ret []*car.Info
 	for _, obj := range list.Data.AnyRentObj {
-		ret = append(ret, &pb.Car{
-			Id:          strings.ReplaceAll(obj.CarNo, " ", ""),
-			CarType:     obj.CarType,
-			CarTypeName: obj.CarTypeName,
-			CarOfArea:   obj.CarOfArea,
-			ProjectName: obj.ProjectName,
-			ProjectId:   obj.ProjID,
-			Latitude:    obj.Latitude,
-			Longitude:   obj.Longitude,
-			Seat:        int64(obj.Seat),
-		})
+		ret = append(ret, newCarFromResp(obj))
 	}
 
 	return ret, nil

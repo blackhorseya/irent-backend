@@ -1,12 +1,12 @@
 package car
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"reflect"
 	"testing"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/car/repo/mocks"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
@@ -14,13 +14,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type bizSuite struct {
+type suiteBiz struct {
 	suite.Suite
 	mock *mocks.IRepo
 	biz  IBiz
 }
 
-func (s *bizSuite) SetupTest() {
+func (s *suiteBiz) SetupTest() {
 	logger, _ := zap.NewDevelopment()
 
 	s.mock = new(mocks.IRepo)
@@ -32,15 +32,15 @@ func (s *bizSuite) SetupTest() {
 	s.biz = biz
 }
 
-func (s *bizSuite) TearDownTest() {
+func (s *suiteBiz) TearDownTest() {
 	s.mock.AssertExpectations(s.T())
 }
 
-func TestBizSuite(t *testing.T) {
-	suite.Run(t, new(bizSuite))
+func TestSuiteBiz(t *testing.T) {
+	suite.Run(t, new(suiteBiz))
 }
 
-func (s *bizSuite) Test_impl_NearTopN() {
+func (s *suiteBiz) Test_impl_NearTopN() {
 	type args struct {
 		top       int
 		latitude  float64
@@ -50,7 +50,7 @@ func (s *bizSuite) Test_impl_NearTopN() {
 	tests := []struct {
 		name      string
 		args      args
-		wantCars  []*pb.Car
+		wantCars  []*car.Info
 		wantTotal int
 		wantErr   bool
 	}{
@@ -82,9 +82,9 @@ func (s *bizSuite) Test_impl_NearTopN() {
 		{
 			name: "list then success",
 			args: args{top: 1, latitude: 0, longitude: 0, mock: func() {
-				s.mock.On("List", mock.Anything).Return([]*pb.Car{testdata.Car1}, nil).Once()
+				s.mock.On("List", mock.Anything).Return([]*car.Info{testdata.Car1}, nil).Once()
 			}},
-			wantCars:  []*pb.Car{testdata.Car1},
+			wantCars:  []*car.Info{testdata.Car1},
 			wantTotal: 1,
 			wantErr:   false,
 		},
