@@ -2,13 +2,12 @@ package http
 
 import (
 	"fmt"
+	"github.com/blackhorseya/gocommon/pkg/ginhttp"
 	"github.com/blackhorseya/gocommon/pkg/utils/netutil"
 	"net/http"
 	"time"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http/middlewares"
-	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
@@ -59,18 +58,12 @@ func NewRouter(o *Options, logger *zap.Logger, init InitHandlers) *gin.Engine {
 
 	r := gin.New()
 
-	defaultCORS := cors.DefaultConfig()
-	defaultCORS.AllowAllOrigins = true
-	defaultCORS.AddAllowHeaders("Authorization")
-	defaultCORS.AddExposeHeaders("X-Total-Count")
-
-	r.Use(cors.New(defaultCORS))
-
-	r.Use(middlewares.ContextMiddleware())
+	r.Use(ginhttp.AddCors())
+	r.Use(ginhttp.AddContextx())
 	r.Use(gin.Recovery())
 	r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(logger, true))
-	r.Use(middlewares.ResponseMiddleware())
+	r.Use(ginhttp.HandleError())
 
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 

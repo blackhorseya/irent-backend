@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"github.com/blackhorseya/gocommon/pkg/ginhttp"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user/mocks"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http/middlewares"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
@@ -43,8 +43,8 @@ func (s *handlerSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 
 	s.r = gin.New()
-	s.r.Use(middlewares.ContextMiddleware())
-	s.r.Use(middlewares.ResponseMiddleware())
+	s.r.Use(ginhttp.AddContextx())
+	s.r.Use(ginhttp.HandleError())
 
 	s.mock = new(mocks.IBiz)
 	handler, err := CreateIHandler(logger, s.mock)

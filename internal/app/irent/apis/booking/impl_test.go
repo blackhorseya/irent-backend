@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/blackhorseya/gocommon/pkg/ginhttp"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -32,8 +33,8 @@ func (s *handlerSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 
 	s.r = gin.New()
-	s.r.Use(middlewares.ContextMiddleware())
-	s.r.Use(middlewares.ResponseMiddleware())
+	s.r.Use(ginhttp.AddContextx())
+	s.r.Use(ginhttp.HandleError())
 
 	s.mock = new(mocks.IBiz)
 	handler, err := CreateIHandler(logger, s.mock)
