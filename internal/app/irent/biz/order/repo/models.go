@@ -1,4 +1,4 @@
-package models
+package repo
 
 // QueryBookingsResp declare query bookings response struct
 type QueryBookingsResp struct {

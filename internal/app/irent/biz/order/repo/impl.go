@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo/models"
 	"github.com/blackhorseya/irent/internal/pkg/base/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/base/timex"
 	"github.com/blackhorseya/irent/pb"
@@ -70,7 +69,7 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, user *pb.Profile) (orders []
 		return nil, err
 	}
 
-	var res *models.QueryBookingsResp
+	var res *QueryBookingsResp
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return nil, err
@@ -103,7 +102,7 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *pb.Profile) 
 	defer cancel()
 
 	url := fmt.Sprintf("%s/Booking", i.o.Endpoint)
-	payload, _ := json.Marshal(&models.BookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
+	payload, _ := json.Marshal(&BookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
 	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
@@ -123,7 +122,7 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *pb.Profile) 
 		return nil, err
 	}
 
-	var res *models.BookResp
+	var res *BookResp
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return nil, err
@@ -144,7 +143,7 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *pb.Profile)
 	defer cancel()
 
 	url := fmt.Sprintf("%s/BookingCancel", i.o.Endpoint)
-	payload, _ := json.Marshal(&models.CancelBookingReq{OrderNo: id})
+	payload, _ := json.Marshal(&CancelBookingReq{OrderNo: id})
 	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
@@ -164,7 +163,7 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *pb.Profile)
 		return err
 	}
 
-	var res *models.CancelBookingResp
+	var res *CancelBookingResp
 	err = json.Unmarshal(data, &res)
 	if err != nil {
 		return err
