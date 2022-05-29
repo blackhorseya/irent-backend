@@ -2,11 +2,11 @@ package http
 
 import (
 	"fmt"
+	"github.com/blackhorseya/gocommon/pkg/utils/netutil"
 	"net/http"
 	"time"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/internal/pkg/base/netutil"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http/middlewares"
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
