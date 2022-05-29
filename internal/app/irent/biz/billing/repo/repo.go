@@ -3,7 +3,6 @@ package repo
 import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/google/wire"
 )
 
@@ -11,7 +10,7 @@ import (
 //go:generate mockery --name=IRepo
 type IRepo interface {
 	// QueryArrears serve caller to query arrears
-	QueryArrears(ctx contextx.Contextx, user *user.Profile) (info *pb.Arrears, err error)
+	QueryArrears(ctx contextx.Contextx, user *user.Profile) (info *user.Arrears, err error)
 }
 
 // ProviderSet is a provider set for wire

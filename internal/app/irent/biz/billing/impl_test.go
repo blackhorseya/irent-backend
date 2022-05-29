@@ -7,7 +7,6 @@ import (
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing/repo/mocks"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
@@ -43,30 +42,30 @@ func TestBizSuite(t *testing.T) {
 
 func (s *bizSuite) Test_impl_GetArrears() {
 	type args struct {
-		user *user.Profile
+		from *user.Profile
 		mock func()
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantInfo *pb.Arrears
+		wantInfo *user.Arrears
 		wantErr  bool
 	}{
 		{
 			name:     "missing id then error",
-			args:     args{user: &user.Profile{ID: "", AccessToken: "token"}},
+			args:     args{from: &user.Profile{ID: "", AccessToken: "token"}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name:     "missing token then error",
-			args:     args{user: &user.Profile{ID: "id", AccessToken: ""}},
+			args:     args{from: &user.Profile{ID: "id", AccessToken: ""}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "get arrears then error",
-			args: args{user: testdata.User1, mock: func() {
+			args: args{from: testdata.User1, mock: func() {
 				s.mock.On("QueryArrears", mock.Anything, testdata.User1).Return(nil, errors.New("error")).Once()
 			}},
 			wantInfo: nil,
@@ -74,7 +73,7 @@ func (s *bizSuite) Test_impl_GetArrears() {
 		},
 		{
 			name: "get arrears then success",
-			args: args{user: testdata.User1, mock: func() {
+			args: args{from: testdata.User1, mock: func() {
 				s.mock.On("QueryArrears", mock.Anything, testdata.User1).Return(testdata.Arrears1, nil).Once()
 			}},
 			wantInfo: testdata.Arrears1,
@@ -87,7 +86,7 @@ func (s *bizSuite) Test_impl_GetArrears() {
 				tt.args.mock()
 			}
 
-			gotInfo, err := s.biz.GetArrears(contextx.Background(), tt.args.user)
+			gotInfo, err := s.biz.GetArrears(contextx.Background(), tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetArrears() error = %v, wantErr %v", err, tt.wantErr)
 				return

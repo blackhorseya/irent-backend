@@ -1,4 +1,4 @@
-package models
+package repo
 
 // QueryArrearsReq declare query arrears request struct
 type QueryArrearsReq struct {

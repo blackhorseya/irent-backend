@@ -4,16 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"io/ioutil"
-	"net/http"
-	"time"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/internal/app/irent/biz/billing/repo/models"
-	"github.com/blackhorseya/irent/pb"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 // Options declare app's configuration
@@ -45,22 +40,19 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) QueryArrears(ctx contextx.Contextx, user *user.Profile) (info *pb.Arrears, err error) {
-	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (i *impl) QueryArrears(ctx contextx.Contextx, from *user.Profile) (info *user.Arrears, err error) {
 	url := fmt.Sprintf("%s/ArrearsQuery", i.o.Endpoint)
-	payload, err := json.Marshal(&models.QueryArrearsReq{IDNO: user.ID})
+	payload, err := json.Marshal(&QueryArrearsReq{IDNO: from.ID})
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", user.AccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -69,34 +61,29 @@ func (i *impl) QueryArrears(ctx contextx.Contextx, user *user.Profile) (info *pb
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	var data *QueryArrearsResp
+	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
 
-	var res *models.QueryArrearsResp
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return nil, err
+	if data.ErrorMessage != "Success" {
+		return nil, errors.New(data.ErrorMessage)
 	}
 
-	if res.ErrorMessage != "Success" {
-		return nil, errors.New(res.ErrorMessage)
-	}
-
-	var records []*pb.ArrearsRecord
-	for _, ar := range res.Data.ArrearsInfos {
-		r := &pb.ArrearsRecord{
+	var records []*user.ArrearsRecord
+	for _, ar := range data.Data.ArrearsInfos {
+		r := &user.ArrearsRecord{
 			OrderNo:     ar.OrderNo,
-			TotalAmount: int32(ar.TotalAmount),
+			TotalAmount: ar.TotalAmount,
 		}
 
 		records = append(records, r)
 	}
 
-	ret := &pb.Arrears{
+	ret := &user.Arrears{
 		Records:     records,
-		TotalAmount: int32(res.Data.TotalAmount),
+		TotalAmount: data.Data.TotalAmount,
 	}
 
 	return ret, nil

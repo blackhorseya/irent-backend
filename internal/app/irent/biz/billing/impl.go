@@ -5,7 +5,6 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing/repo"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"github.com/blackhorseya/irent/pb"
 	"go.uber.org/zap"
 )
 
@@ -22,20 +21,20 @@ func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	}
 }
 
-func (i *impl) GetArrears(ctx contextx.Contextx, user *user.Profile) (info *pb.Arrears, err error) {
-	if len(user.ID) == 0 {
-		i.logger.Error(er.ErrMissingID.Error(), zap.Any("user", user))
+func (i *impl) GetArrears(ctx contextx.Contextx, from *user.Profile) (info *user.Arrears, err error) {
+	if len(from.ID) == 0 {
+		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
 		return nil, er.ErrMissingID
 	}
 
-	if len(user.AccessToken) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("user", user))
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("from", from))
 		return nil, er.ErrMissingToken
 	}
 
-	ret, err := i.repo.QueryArrears(ctx, user)
+	ret, err := i.repo.QueryArrears(ctx, from)
 	if err != nil {
-		i.logger.Error(er.ErrQueryArrears.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrQueryArrears.Error(), zap.Any("from", from))
 		return nil, er.ErrQueryArrears
 	}
 

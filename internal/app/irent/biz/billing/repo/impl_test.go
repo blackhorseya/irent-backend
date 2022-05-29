@@ -3,11 +3,11 @@
 package repo
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/stretchr/testify/suite"
 )
@@ -35,24 +35,24 @@ func TestRepoSuite(t *testing.T) {
 
 func (s *repoSuite) Test_impl_QueryArrears() {
 	type args struct {
-		user *pb.Profile
+		from *user.Profile
 	}
 	tests := []struct {
 		name        string
 		args        args
-		wantArrears *pb.Arrears
+		wantArrears *user.Arrears
 		wantErr     bool
 	}{
 		{
 			name:        "query arrears then success",
-			args:        args{user: testdata.User1},
+			args:        args{from: testdata.User1},
 			wantArrears: nil,
-			wantErr:     false,
+			wantErr:     true,
 		},
 	}
 	for _, tt := range tests {
 		s.T().Run(tt.name, func(t *testing.T) {
-			gotArrears, err := s.repo.QueryArrears(contextx.Background(), tt.args.user)
+			gotArrears, err := s.repo.QueryArrears(contextx.Background(), tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("QueryArrears() error = %v, wantErr %v", err, tt.wantErr)
 				return
