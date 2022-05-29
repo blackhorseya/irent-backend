@@ -1,6 +1,7 @@
 package billing
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
 
@@ -42,7 +43,7 @@ func TestBizSuite(t *testing.T) {
 
 func (s *bizSuite) Test_impl_GetArrears() {
 	type args struct {
-		user *pb.Profile
+		user *user.Profile
 		mock func()
 	}
 	tests := []struct {
@@ -53,13 +54,13 @@ func (s *bizSuite) Test_impl_GetArrears() {
 	}{
 		{
 			name:     "missing id then error",
-			args:     args{user: &pb.Profile{Id: "", AccessToken: "token"}},
+			args:     args{user: &user.Profile{ID: "", AccessToken: "token"}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name:     "missing token then error",
-			args:     args{user: &pb.Profile{Id: "id", AccessToken: ""}},
+			args:     args{user: &user.Profile{ID: "id", AccessToken: ""}},
 			wantInfo: nil,
 			wantErr:  true,
 		},

@@ -4,6 +4,7 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"go.uber.org/zap"
 )
@@ -21,7 +22,7 @@ func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	}
 }
 
-func (i *impl) List(ctx contextx.Contextx, start, end int, user *pb.Profile) (orders []*pb.OrderInfo, err error) {
+func (i *impl) List(ctx contextx.Contextx, start, end int, user *user.Profile) (orders []*pb.OrderInfo, err error) {
 	if start < 0 {
 		i.logger.Error(er.ErrInvalidStart.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
 		return nil, er.ErrInvalidStart
@@ -50,7 +51,7 @@ func (i *impl) List(ctx contextx.Contextx, start, end int, user *pb.Profile) (or
 	return ret, nil
 }
 
-func (i *impl) GetByID(ctx contextx.Contextx, id string, user *pb.Profile) (info *pb.OrderInfo, err error) {
+func (i *impl) GetByID(ctx contextx.Contextx, id string, user *user.Profile) (info *pb.OrderInfo, err error) {
 	if len(user.AccessToken) == 0 {
 		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("user", user))
 		return nil, er.ErrMissingToken
@@ -80,7 +81,7 @@ func (i *impl) GetByID(ctx contextx.Contextx, id string, user *pb.Profile) (info
 	return nil, er.ErrBookingNotExists
 }
 
-func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, user *pb.Profile) (info *pb.Booking, err error) {
+func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("user", user))
 		return nil, er.ErrMissingID
@@ -105,7 +106,7 @@ func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, user *pb.Profil
 	return ret, nil
 }
 
-func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *pb.Profile) (err error) {
+func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.Any("user", user))
 		return er.ErrMissingID

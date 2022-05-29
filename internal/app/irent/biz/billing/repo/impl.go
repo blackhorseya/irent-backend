@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -44,12 +45,12 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) QueryArrears(ctx contextx.Contextx, user *pb.Profile) (info *pb.Arrears, err error) {
+func (i *impl) QueryArrears(ctx contextx.Contextx, user *user.Profile) (info *pb.Arrears, err error) {
 	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	url := fmt.Sprintf("%s/ArrearsQuery", i.o.Endpoint)
-	payload, err := json.Marshal(&models.QueryArrearsReq{IDNO: user.Id})
+	payload, err := json.Marshal(&models.QueryArrearsReq{IDNO: user.ID})
 	if err != nil {
 		return nil, err
 	}

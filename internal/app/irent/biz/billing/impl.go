@@ -4,6 +4,7 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing/repo"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"go.uber.org/zap"
 )
@@ -21,8 +22,8 @@ func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	}
 }
 
-func (i *impl) GetArrears(ctx contextx.Contextx, user *pb.Profile) (info *pb.Arrears, err error) {
-	if len(user.Id) == 0 {
+func (i *impl) GetArrears(ctx contextx.Contextx, user *user.Profile) (info *pb.Arrears, err error) {
+	if len(user.ID) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.Any("user", user))
 		return nil, er.ErrMissingID
 	}

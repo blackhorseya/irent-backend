@@ -3,23 +3,25 @@ package order
 import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/google/wire"
 )
 
 // IBiz declare order service function
+//go:generate mockery --name=IBiz
 type IBiz interface {
 	// List serve caller to list all orders
-	List(ctx contextx.Contextx, start, end int, user *pb.Profile) (orders []*pb.OrderInfo, err error)
+	List(ctx contextx.Contextx, start, end int, user *user.Profile) (orders []*pb.OrderInfo, err error)
 
 	// GetByID serve caller to get an order info by id
-	GetByID(ctx contextx.Contextx, id string, user *pb.Profile) (info *pb.OrderInfo, err error)
+	GetByID(ctx contextx.Contextx, id string, user *user.Profile) (info *pb.OrderInfo, err error)
 
 	// BookCar serve caller to book a car
-	BookCar(ctx contextx.Contextx, id, projID string, user *pb.Profile) (info *pb.Booking, err error)
+	BookCar(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error)
 
 	// CancelBooking serve caller to cancel an order by order's id
-	CancelBooking(ctx contextx.Contextx, id string, user *pb.Profile) (err error)
+	CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error)
 }
 
 // ProviderSet is a provider set for wire

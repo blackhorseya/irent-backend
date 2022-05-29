@@ -46,7 +46,7 @@ func (s *repoSuite) Test_impl_Login() {
 	}{
 		{
 			name:     "login then success",
-			args:     args{id: testdata.User1.Id, password: "password"},
+			args:     args{id: testdata.User1.ID, password: "password"},
 			wantInfo: nil,
 			wantErr:  true,
 		},

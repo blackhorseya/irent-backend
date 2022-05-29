@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
+	"github.com/blackhorseya/irent/test/testdata"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user/mocks"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -22,12 +22,6 @@ var (
 	id1 = "A111768050"
 
 	pwd1 = "password"
-
-	shaPWD1 = "0x5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
-
-	user1 = &pb.Profile{
-		Id: id1,
-	}
 )
 
 type handlerSuite struct {
@@ -96,7 +90,7 @@ func (s *handlerSuite) Test_impl_Login() {
 		{
 			name: "login then success",
 			args: args{id: id1, password: pwd1, mock: func() {
-				s.mock.On("Login", mock.Anything, id1, pwd1).Return(user1, nil).Once()
+				s.mock.On("Login", mock.Anything, id1, pwd1).Return(testdata.User1, nil).Once()
 			}},
 			wantCode: 201,
 		},

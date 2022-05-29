@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -45,7 +46,7 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) QueryBookings(ctx contextx.Contextx, user *pb.Profile) (orders []*pb.OrderInfo, err error) {
+func (i *impl) QueryBookings(ctx contextx.Contextx, user *user.Profile) (orders []*pb.OrderInfo, err error) {
 	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -97,7 +98,7 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, user *pb.Profile) (orders []
 	return ret, nil
 }
 
-func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *pb.Profile) (info *pb.Booking, err error) {
+func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error) {
 	timeout, cancel := contextx.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
@@ -138,7 +139,7 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, user *pb.Profile) 
 	}, nil
 }
 
-func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *pb.Profile) (err error) {
+func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error) {
 	timeout, cancel := contextx.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

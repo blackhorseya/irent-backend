@@ -7,6 +7,7 @@ import (
 )
 
 // IRepo declare repo service function
+//go:generate mockery --name=IRepo
 type IRepo interface {
 	// Login serve caller to log in the system
 	Login(ctx contextx.Contextx, id, password string) (info *user.Profile, err error)

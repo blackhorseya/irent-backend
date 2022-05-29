@@ -2,12 +2,12 @@ package billing
 
 import (
 	"github.com/blackhorseya/gocommon/pkg/response"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"net/http"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -59,7 +59,7 @@ func (i *impl) GetArrears(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.GetArrears(ctx, &pb.Profile{Id: req.ID, AccessToken: token})
+	ret, err := i.biz.GetArrears(ctx, &user.Profile{ID: req.ID, AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return

@@ -70,19 +70,19 @@ func (s *handlerSuite) Test_impl_GetArrears() {
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.User1.Id, token: ""},
+			args:     args{id: testdata.User1.ID, token: ""},
 			wantCode: 401,
 		},
 		{
 			name: "get arrears then error",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
 				s.mock.On("GetArrears", mock.Anything, testdata.User1).Return(nil, er.ErrQueryArrears).Once()
 			}},
 			wantCode: 500,
 		},
 		{
 			name: "get arrears then success",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
 				s.mock.On("GetArrears", mock.Anything, testdata.User1).Return(testdata.Arrears1, nil).Once()
 			}},
 			wantCode: 200,

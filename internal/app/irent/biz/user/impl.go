@@ -5,7 +5,7 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user/repo"
 	"github.com/blackhorseya/irent/internal/pkg/base/encrypt"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/pb"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"go.uber.org/zap"
 )
 
@@ -22,17 +22,17 @@ func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	}
 }
 
-func (i *impl) GetByID(ctx contextx.Contextx, id string) (info *pb.Profile, err error) {
+func (i *impl) GetByID(ctx contextx.Contextx, id string) (info *user.Profile, err error) {
 	// todo: 2021-05-11|11:59|doggy|implement me
 	panic("implement me")
 }
 
-func (i *impl) GetByAccessToken(ctx contextx.Contextx, token string) (info *pb.Profile, err error) {
+func (i *impl) GetByAccessToken(ctx contextx.Contextx, token string) (info *user.Profile, err error) {
 	// todo: 2021-05-11|11:59|doggy|implement me
 	panic("implement me")
 }
 
-func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *pb.Profile, err error) {
+func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *user.Profile, err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error())
 		return nil, er.ErrMissingID
@@ -52,12 +52,12 @@ func (i *impl) Login(ctx contextx.Contextx, id, password string) (info *pb.Profi
 	return ret, nil
 }
 
-func (i *impl) Logout(ctx contextx.Contextx, user *pb.Profile) error {
+func (i *impl) Logout(ctx contextx.Contextx, user *user.Profile) error {
 	// todo: 2021-05-11|11:59|doggy|implement me
 	panic("implement me")
 }
 
-func (i *impl) RefreshToken(ctx contextx.Contextx, user *pb.Profile) (info *pb.Profile, err error) {
+func (i *impl) RefreshToken(ctx contextx.Contextx, user *user.Profile) (info *user.Profile, err error) {
 	// todo: 2021-05-11|11:59|doggy|implement me
 	panic("implement me")
 }

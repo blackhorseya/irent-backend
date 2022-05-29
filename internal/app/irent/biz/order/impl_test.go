@@ -1,6 +1,7 @@
 package order
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
 
@@ -44,7 +45,7 @@ func (s *bizSuite) Test_impl_List() {
 	type args struct {
 		start int
 		end   int
-		user  *pb.Profile
+		user  *user.Profile
 		mock  func()
 	}
 	tests := []struct {
@@ -67,7 +68,7 @@ func (s *bizSuite) Test_impl_List() {
 		},
 		{
 			name:       "missing token then error",
-			args:       args{start: 0, end: 2, user: &pb.Profile{}},
+			args:       args{start: 0, end: 2, user: &user.Profile{}},
 			wantOrders: nil,
 			wantErr:    true,
 		},
@@ -119,7 +120,7 @@ func (s *bizSuite) Test_impl_List() {
 func (s *bizSuite) Test_impl_GetByID() {
 	type args struct {
 		id   string
-		user *pb.Profile
+		user *user.Profile
 		mock func()
 	}
 	tests := []struct {
@@ -130,7 +131,7 @@ func (s *bizSuite) Test_impl_GetByID() {
 	}{
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.Order1.No, user: &pb.Profile{}},
+			args:     args{id: testdata.Order1.No, user: &user.Profile{}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
@@ -189,7 +190,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 	type args struct {
 		id     string
 		projID string
-		user   *pb.Profile
+		user   *user.Profile
 		mock   func()
 	}
 	tests := []struct {
@@ -212,7 +213,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: &pb.Profile{}},
+			args:     args{id: testdata.Car1.Id, projID: testdata.ProjID1, user: &user.Profile{}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
@@ -256,7 +257,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 func (s *bizSuite) Test_impl_CancelBooking() {
 	type args struct {
 		id   string
-		user *pb.Profile
+		user *user.Profile
 		mock func()
 	}
 	tests := []struct {
@@ -271,7 +272,7 @@ func (s *bizSuite) Test_impl_CancelBooking() {
 		},
 		{
 			name:    "missing token then error",
-			args:    args{id: testdata.Car1.Id, user: &pb.Profile{}},
+			args:    args{id: testdata.Car1.Id, user: &user.Profile{}},
 			wantErr: true,
 		},
 		{

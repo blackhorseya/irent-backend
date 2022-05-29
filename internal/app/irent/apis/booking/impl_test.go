@@ -127,20 +127,20 @@ func (s *handlerSuite) Test_impl_GetBookingByID() {
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.User1.Id, token: ""},
+			args:     args{id: testdata.User1.ID, token: ""},
 			wantCode: 401,
 		},
 		{
 			name: "get by id then error",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("GetByID", mock.Anything, testdata.User1.Id, testdata.User1).Return(nil, er.ErrGetBookingByID).Once()
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("GetByID", mock.Anything, testdata.User1.ID, testdata.User1).Return(nil, er.ErrGetBookingByID).Once()
 			}},
 			wantCode: 500,
 		},
 		{
 			name: "get by id then success",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("GetByID", mock.Anything, testdata.User1.Id, testdata.User1).Return(testdata.Order1, nil).Once()
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("GetByID", mock.Anything, testdata.User1.ID, testdata.User1).Return(testdata.Order1, nil).Once()
 			}},
 			wantCode: 200,
 		},
@@ -183,15 +183,15 @@ func (s *handlerSuite) Test_impl_Book() {
 	}{
 		{
 			name: "book then error",
-			args: args{id: testdata.User1.Id, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("BookCar", mock.Anything, testdata.User1.Id, testdata.ProjID1, testdata.User1).Return(nil, er.ErrBook).Once()
+			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(nil, er.ErrBook).Once()
 			}},
 			wantCode: 500,
 		},
 		{
 			name: "book then success",
-			args: args{id: testdata.User1.Id, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("BookCar", mock.Anything, testdata.User1.Id, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
+			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
 			}},
 			wantCode: 200,
 		},
@@ -239,20 +239,20 @@ func (s *handlerSuite) Test_impl_CancelBooking() {
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.User1.Id, token: ""},
+			args:     args{id: testdata.User1.ID, token: ""},
 			wantCode: 401,
 		},
 		{
 			name: "cancel booking then error",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.User1.Id, testdata.User1).Return(er.ErrCancelBooking).Once()
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.User1.ID, testdata.User1).Return(er.ErrCancelBooking).Once()
 			}},
 			wantCode: 500,
 		},
 		{
 			name: "cancel booking then success",
-			args: args{id: testdata.User1.Id, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.User1.Id, testdata.User1).Return(nil).Once()
+			args: args{id: testdata.User1.ID, token: testdata.User1.AccessToken, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.User1.ID, testdata.User1).Return(nil).Once()
 			}},
 			wantCode: 200,
 		},

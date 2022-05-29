@@ -2,12 +2,12 @@ package booking
 
 import (
 	"github.com/blackhorseya/gocommon/pkg/response"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"net/http"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -56,7 +56,7 @@ func (i *impl) ListBookings(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.List(ctx, 0, 0, &pb.Profile{AccessToken: token})
+	ret, err := i.biz.List(ctx, 0, 0, &user.Profile{AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -95,7 +95,7 @@ func (i *impl) GetBookingByID(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.GetByID(ctx, req.ID, &pb.Profile{Id: req.ID, AccessToken: token})
+	ret, err := i.biz.GetByID(ctx, req.ID, &user.Profile{ID: req.ID, AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -133,7 +133,7 @@ func (i *impl) Book(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.BookCar(ctx, data.ID, data.ProjectID, &pb.Profile{Id: data.ID, AccessToken: token})
+	ret, err := i.biz.BookCar(ctx, data.ID, data.ProjectID, &user.Profile{ID: data.ID, AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -171,7 +171,7 @@ func (i *impl) CancelBooking(c *gin.Context) {
 		return
 	}
 
-	err := i.biz.CancelBooking(ctx, req.ID, &pb.Profile{Id: req.ID, AccessToken: token})
+	err := i.biz.CancelBooking(ctx, req.ID, &user.Profile{ID: req.ID, AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return

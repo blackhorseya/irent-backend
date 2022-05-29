@@ -1,12 +1,12 @@
 package user
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user/repo/mocks"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
@@ -49,7 +49,7 @@ func (s *bizSuite) Test_impl_Login() {
 	tests := []struct {
 		name     string
 		args     args
-		wantInfo *pb.Profile
+		wantInfo *user.Profile
 		wantErr  bool
 	}{
 		{
@@ -60,22 +60,22 @@ func (s *bizSuite) Test_impl_Login() {
 		},
 		{
 			name:     "missing password then error",
-			args:     args{id: testdata.User1.Id, password: ""},
+			args:     args{id: testdata.User1.ID, password: ""},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "login then error",
-			args: args{id: testdata.User1.Id, password: "password", mock: func() {
-				s.mock.On("Login", mock.Anything, testdata.User1.Id, mock.Anything).Return(nil, errors.New("error")).Once()
+			args: args{id: testdata.User1.ID, password: "password", mock: func() {
+				s.mock.On("Login", mock.Anything, testdata.User1.ID, mock.Anything).Return(nil, errors.New("error")).Once()
 			}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "login then success",
-			args: args{id: testdata.User1.Id, password: "password", mock: func() {
-				s.mock.On("Login", mock.Anything, testdata.User1.Id, mock.Anything).Return(testdata.User1, nil).Once()
+			args: args{id: testdata.User1.ID, password: "password", mock: func() {
+				s.mock.On("Login", mock.Anything, testdata.User1.ID, mock.Anything).Return(testdata.User1, nil).Once()
 			}},
 			wantInfo: testdata.User1,
 			wantErr:  false,
