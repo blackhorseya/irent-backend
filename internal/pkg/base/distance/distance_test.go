@@ -40,17 +40,18 @@ func TestCalcWithGeo(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want float64
+		want int
 	}{
 		{
 			name: "0 0 3 4 then 345.3489130348499",
 			args: args{lat1: 0, lng1: 0, lat2: 3, lng2: 4},
-			want: 345.3489130348489,
+			want: 345,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := CalcWithGeo(tt.args.lat1, tt.args.lng1, tt.args.lat2, tt.args.lng2, tt.args.unit...); got != tt.want {
+			got := CalcWithGeo(tt.args.lat1, tt.args.lng1, tt.args.lat2, tt.args.lng2, tt.args.unit...)
+			if int(got) != tt.want {
 				t.Errorf("CalcWithGeo() = %v, want %v", got, tt.want)
 			}
 		})
