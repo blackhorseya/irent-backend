@@ -3,19 +3,19 @@
 package main
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/config"
 	"github.com/blackhorseya/gocommon/pkg/log"
 	"github.com/blackhorseya/irent/internal/app/irent"
 	"github.com/blackhorseya/irent/internal/app/irent/apis"
 	"github.com/blackhorseya/irent/internal/app/irent/biz"
 	"github.com/blackhorseya/irent/internal/pkg/app"
-	"github.com/blackhorseya/irent/internal/pkg/entity/config"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/google/wire"
 )
 
 var providerSet = wire.NewSet(
-	log.ProviderSet,
 	config.ProviderSet,
+	log.ProviderSet,
 	http.ProviderSet,
 	irent.ProviderSet,
 	apis.ProviderSet,

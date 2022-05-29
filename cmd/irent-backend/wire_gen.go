@@ -7,6 +7,7 @@
 package main
 
 import (
+	"github.com/blackhorseya/gocommon/pkg/config"
 	"github.com/blackhorseya/gocommon/pkg/log"
 	"github.com/blackhorseya/irent/internal/app/irent"
 	"github.com/blackhorseya/irent/internal/app/irent/apis"
@@ -25,7 +26,6 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user"
 	repo2 "github.com/blackhorseya/irent/internal/app/irent/biz/user/repo"
 	"github.com/blackhorseya/irent/internal/pkg/app"
-	"github.com/blackhorseya/irent/internal/pkg/entity/config"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/google/wire"
 )
@@ -98,4 +98,4 @@ func CreateApp(path2 string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(log.ProviderSet, config.ProviderSet, http.ProviderSet, irent.ProviderSet, apis.ProviderSet, biz.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, irent.ProviderSet, apis.ProviderSet, biz.ProviderSet)
