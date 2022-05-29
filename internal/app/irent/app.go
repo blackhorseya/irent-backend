@@ -4,7 +4,6 @@ import (
 	// import swagger docs
 	_ "github.com/blackhorseya/irent/api/docs"
 	"github.com/blackhorseya/irent/internal/pkg/app"
-	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/google/wire"
 	"github.com/pkg/errors"
@@ -34,8 +33,8 @@ func NewOptions(v *viper.Viper, logger *zap.Logger) (*Options, error) {
 }
 
 // New serve caller to create an *app.Application
-func New(o *Options, logger *zap.Logger, hs *http.Server, runner runner.Runner) (*app.Application, error) {
-	a, err := app.New(o.Name, logger, app.HTTPServerOption(hs), app.RunnerEngineOption(runner))
+func New(o *Options, logger *zap.Logger, hs *http.Server) (*app.Application, error) {
+	a, err := app.New(o.Name, logger, app.HTTPServerOption(hs))
 	if err != nil {
 		return nil, errors.Wrap(err, "new app error")
 	}

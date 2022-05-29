@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/blackhorseya/irent/internal/pkg/base/contextx"
+	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/stretchr/testify/suite"

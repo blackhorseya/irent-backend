@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	contextx "github.com/blackhorseya/irent/internal/pkg/base/contextx"
+	contextx "github.com/blackhorseya/gocommon/pkg/contextx"
 	mock "github.com/stretchr/testify/mock"
 
 	pb "github.com/blackhorseya/irent/pb"

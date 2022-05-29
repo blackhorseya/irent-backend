@@ -9,7 +9,6 @@ import (
 	"github.com/blackhorseya/irent/internal/pkg/app"
 	"github.com/blackhorseya/irent/internal/pkg/entity/config"
 	"github.com/blackhorseya/irent/internal/pkg/infra/log"
-	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/google/wire"
 )
@@ -18,7 +17,6 @@ var providerSet = wire.NewSet(
 	log.ProviderSet,
 	config.ProviderSet,
 	http.ProviderSet,
-	runner.ProviderSet,
 	irent.ProviderSet,
 	apis.ProviderSet,
 	biz.ProviderSet,

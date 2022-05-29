@@ -45,7 +45,7 @@ func TestCalcWithGeo(t *testing.T) {
 		{
 			name: "0 0 3 4 then 345.3489130348499",
 			args: args{lat1: 0, lng1: 0, lat2: 3, lng2: 4},
-			want: 345.3489130348499,
+			want: 345.3489130348489,
 		},
 	}
 	for _, tt := range tests {

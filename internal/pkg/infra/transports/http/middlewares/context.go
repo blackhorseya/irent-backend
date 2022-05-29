@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/blackhorseya/irent/internal/pkg/base/contextx"
+	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/base/trace"
 	"github.com/gin-gonic/gin"
 )

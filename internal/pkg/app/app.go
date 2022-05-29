@@ -5,7 +5,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -16,7 +15,6 @@ type Application struct {
 	name       string
 	logger     *zap.Logger
 	httpServer *http.Server
-	runner     runner.Runner
 }
 
 // Option declare application options
@@ -27,16 +25,6 @@ func HTTPServerOption(svr *http.Server) Option {
 	return func(app *Application) error {
 		svr.Application(app.name)
 		app.httpServer = svr
-
-		return nil
-	}
-}
-
-// RunnerEngineOption declare runner engine option
-func RunnerEngineOption(svr runner.Runner) Option {
-	return func(app *Application) error {
-		svr.Application(app.name)
-		app.runner = svr
 
 		return nil
 	}
@@ -67,13 +55,6 @@ func (a *Application) Start() error {
 		}
 	}
 
-	if a.runner != nil {
-		err := a.runner.Start()
-		if err != nil {
-			return errors.Wrap(err, "runner engine start error")
-		}
-	}
-
 	return nil
 }
 
@@ -90,13 +71,6 @@ func (a *Application) AwaitSignal() {
 			err := a.httpServer.Stop()
 			if err != nil {
 				a.logger.Warn("stop http server error", zap.Error(err))
-			}
-		}
-
-		if a.runner != nil {
-			err := a.runner.Stop()
-			if err != nil {
-				a.logger.Warn("stop runner engine error", zap.Error(err))
 			}
 		}
 
