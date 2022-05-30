@@ -6,6 +6,8 @@ import (
 	contextx "github.com/blackhorseya/gocommon/pkg/contextx"
 	mock "github.com/stretchr/testify/mock"
 
+	order "github.com/blackhorseya/irent/internal/pkg/entity/order"
+
 	pb "github.com/blackhorseya/irent/pb"
 
 	testing "testing"
@@ -19,15 +21,15 @@ type IRepo struct {
 }
 
 // Book provides a mock function with given fields: ctx, id, projID, from
-func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*pb.Booking, error) {
+func (_m *IRepo) Book(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*order.Booking, error) {
 	ret := _m.Called(ctx, id, projID, from)
 
-	var r0 *pb.Booking
-	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *pb.Booking); ok {
+	var r0 *order.Booking
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *order.Booking); ok {
 		r0 = rf(ctx, id, projID, from)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*pb.Booking)
+			r0 = ret.Get(0).(*order.Booking)
 		}
 	}
 

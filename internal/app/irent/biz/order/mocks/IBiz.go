@@ -6,6 +6,8 @@ import (
 	contextx "github.com/blackhorseya/gocommon/pkg/contextx"
 	mock "github.com/stretchr/testify/mock"
 
+	order "github.com/blackhorseya/irent/internal/pkg/entity/order"
+
 	pb "github.com/blackhorseya/irent/pb"
 
 	testing "testing"
@@ -18,22 +20,22 @@ type IBiz struct {
 	mock.Mock
 }
 
-// BookCar provides a mock function with given fields: ctx, id, projID, _a3
-func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, _a3 *user.Profile) (*pb.Booking, error) {
-	ret := _m.Called(ctx, id, projID, _a3)
+// BookCar provides a mock function with given fields: ctx, id, projID, from
+func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*order.Booking, error) {
+	ret := _m.Called(ctx, id, projID, from)
 
-	var r0 *pb.Booking
-	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *pb.Booking); ok {
-		r0 = rf(ctx, id, projID, _a3)
+	var r0 *order.Booking
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *order.Booking); ok {
+		r0 = rf(ctx, id, projID, from)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*pb.Booking)
+			r0 = ret.Get(0).(*order.Booking)
 		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile) error); ok {
-		r1 = rf(ctx, id, projID, _a3)
+		r1 = rf(ctx, id, projID, from)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -41,13 +43,13 @@ func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, _a3 *us
 	return r0, r1
 }
 
-// CancelBooking provides a mock function with given fields: ctx, id, _a2
-func (_m *IBiz) CancelBooking(ctx contextx.Contextx, id string, _a2 *user.Profile) error {
-	ret := _m.Called(ctx, id, _a2)
+// CancelBooking provides a mock function with given fields: ctx, id, from
+func (_m *IBiz) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) error {
+	ret := _m.Called(ctx, id, from)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, *user.Profile) error); ok {
-		r0 = rf(ctx, id, _a2)
+		r0 = rf(ctx, id, from)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -55,13 +57,13 @@ func (_m *IBiz) CancelBooking(ctx contextx.Contextx, id string, _a2 *user.Profil
 	return r0
 }
 
-// GetByID provides a mock function with given fields: ctx, id, _a2
-func (_m *IBiz) GetByID(ctx contextx.Contextx, id string, _a2 *user.Profile) (*pb.OrderInfo, error) {
-	ret := _m.Called(ctx, id, _a2)
+// GetByID provides a mock function with given fields: ctx, id, from
+func (_m *IBiz) GetByID(ctx contextx.Contextx, id string, from *user.Profile) (*pb.OrderInfo, error) {
+	ret := _m.Called(ctx, id, from)
 
 	var r0 *pb.OrderInfo
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, *user.Profile) *pb.OrderInfo); ok {
-		r0 = rf(ctx, id, _a2)
+		r0 = rf(ctx, id, from)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*pb.OrderInfo)
@@ -70,7 +72,7 @@ func (_m *IBiz) GetByID(ctx contextx.Contextx, id string, _a2 *user.Profile) (*p
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, *user.Profile) error); ok {
-		r1 = rf(ctx, id, _a2)
+		r1 = rf(ctx, id, from)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -78,13 +80,13 @@ func (_m *IBiz) GetByID(ctx contextx.Contextx, id string, _a2 *user.Profile) (*p
 	return r0, r1
 }
 
-// List provides a mock function with given fields: ctx, start, end, _a3
-func (_m *IBiz) List(ctx contextx.Contextx, start int, end int, _a3 *user.Profile) ([]*pb.OrderInfo, error) {
-	ret := _m.Called(ctx, start, end, _a3)
+// List provides a mock function with given fields: ctx, start, end, from
+func (_m *IBiz) List(ctx contextx.Contextx, start int, end int, from *user.Profile) ([]*pb.OrderInfo, error) {
+	ret := _m.Called(ctx, start, end, from)
 
 	var r0 []*pb.OrderInfo
 	if rf, ok := ret.Get(0).(func(contextx.Contextx, int, int, *user.Profile) []*pb.OrderInfo); ok {
-		r0 = rf(ctx, start, end, _a3)
+		r0 = rf(ctx, start, end, from)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*pb.OrderInfo)
@@ -93,7 +95,7 @@ func (_m *IBiz) List(ctx contextx.Contextx, start int, end int, _a3 *user.Profil
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(contextx.Contextx, int, int, *user.Profile) error); ok {
-		r1 = rf(ctx, start, end, _a3)
+		r1 = rf(ctx, start, end, from)
 	} else {
 		r1 = ret.Error(1)
 	}

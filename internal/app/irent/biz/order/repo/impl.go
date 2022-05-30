@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/base/timex"
+	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/pkg/errors"
@@ -87,7 +88,7 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders 
 	return ret, nil
 }
 
-func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *pb.Booking, err error) {
+func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
 	url := fmt.Sprintf("%s/Booking", i.o.Endpoint)
 	payload, _ := json.Marshal(&BookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
@@ -114,9 +115,9 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile
 		return nil, errors.New(data.ErrorMessage)
 	}
 
-	return &pb.Booking{
+	return &order.Booking{
 		No:         data.Data.OrderNo,
-		LastPickAt: timex.ParseYYYYMMddHHmmss(data.Data.LastPickTime).UnixNano(),
+		LastPickAt: timex.ParseYYYYMMddHHmmss(data.Data.LastPickTime),
 	}, nil
 }
 

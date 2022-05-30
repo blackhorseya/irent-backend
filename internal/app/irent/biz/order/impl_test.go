@@ -1,6 +1,7 @@
 package order
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
@@ -190,36 +191,36 @@ func (s *bizSuite) Test_impl_BookCar() {
 	type args struct {
 		id     string
 		projID string
-		user   *user.Profile
+		from   *user.Profile
 		mock   func()
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantInfo *pb.Booking
+		wantInfo *order.Booking
 		wantErr  bool
 	}{
 		{
 			name:     "missing id then error",
-			args:     args{id: "", projID: testdata.ProjID1, user: testdata.User1},
+			args:     args{id: "", projID: testdata.ProjID1, from: testdata.User1},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name:     "missing project id then error",
-			args:     args{id: testdata.Car1.ID, projID: "", user: testdata.User1},
+			args:     args{id: testdata.Car1.ID, projID: "", from: testdata.User1},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name:     "missing token then error",
-			args:     args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: &user.Profile{}},
+			args:     args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: &user.Profile{}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "book then error",
-			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
 				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(nil, errors.New("error")).Once()
 			}},
 			wantInfo: nil,
@@ -227,7 +228,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 		},
 		{
 			name: "book then success",
-			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, user: testdata.User1, mock: func() {
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
 				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
 			}},
 			wantInfo: testdata.Booking1,
@@ -240,7 +241,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 				tt.args.mock()
 			}
 
-			gotInfo, err := s.biz.BookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.user)
+			gotInfo, err := s.biz.BookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BookCar() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -257,7 +258,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 func (s *bizSuite) Test_impl_CancelBooking() {
 	type args struct {
 		id   string
-		user *user.Profile
+		from *user.Profile
 		mock func()
 	}
 	tests := []struct {
@@ -267,24 +268,24 @@ func (s *bizSuite) Test_impl_CancelBooking() {
 	}{
 		{
 			name:    "missing id then error",
-			args:    args{id: "", user: testdata.User1},
+			args:    args{id: "", from: testdata.User1},
 			wantErr: true,
 		},
 		{
 			name:    "missing token then error",
-			args:    args{id: testdata.Car1.ID, user: &user.Profile{}},
+			args:    args{id: testdata.Car1.ID, from: &user.Profile{}},
 			wantErr: true,
 		},
 		{
 			name: "cancel booking then error",
-			args: args{id: testdata.Car1.ID, user: testdata.User1, mock: func() {
+			args: args{id: testdata.Car1.ID, from: testdata.User1, mock: func() {
 				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(errors.New("error")).Once()
 			}},
 			wantErr: true,
 		},
 		{
 			name: "cancel booking then success",
-			args: args{id: testdata.Car1.ID, user: testdata.User1, mock: func() {
+			args: args{id: testdata.Car1.ID, from: testdata.User1, mock: func() {
 				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
 			}},
 			wantErr: false,
@@ -296,7 +297,7 @@ func (s *bizSuite) Test_impl_CancelBooking() {
 				tt.args.mock()
 			}
 
-			if err := s.biz.CancelBooking(contextx.Background(), tt.args.id, tt.args.user); (err != nil) != tt.wantErr {
+			if err := s.biz.CancelBooking(contextx.Background(), tt.args.id, tt.args.from); (err != nil) != tt.wantErr {
 				t.Errorf("CancelBooking() error = %v, wantErr %v", err, tt.wantErr)
 			}
 

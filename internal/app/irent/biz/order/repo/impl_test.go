@@ -3,6 +3,7 @@
 package repo
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"reflect"
 	"testing"
@@ -99,7 +100,7 @@ func (s *suiteRepo) Test_impl_Book() {
 	tests := []struct {
 		name     string
 		args     args
-		wantInfo *pb.Booking
+		wantInfo *order.Booking
 		wantErr  bool
 	}{
 		{

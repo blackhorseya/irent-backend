@@ -4,6 +4,7 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"go.uber.org/zap"
@@ -22,53 +23,53 @@ func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	}
 }
 
-func (i *impl) List(ctx contextx.Contextx, start, end int, user *user.Profile) (orders []*pb.OrderInfo, err error) {
+func (i *impl) List(ctx contextx.Contextx, start, end int, from *user.Profile) (orders []*pb.OrderInfo, err error) {
 	if start < 0 {
-		i.logger.Error(er.ErrInvalidStart.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
+		i.logger.Error(er.ErrInvalidStart.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("from", from))
 		return nil, er.ErrInvalidStart
 	}
 
 	if end < 0 {
-		i.logger.Error(er.ErrInvalidEnd.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
+		i.logger.Error(er.ErrInvalidEnd.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("from", from))
 		return nil, er.ErrInvalidEnd
 	}
 
-	if len(user.AccessToken) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("from", from))
 		return nil, er.ErrMissingToken
 	}
 
-	ret, err := i.repo.QueryBookings(ctx, user)
+	ret, err := i.repo.QueryBookings(ctx, from)
 	if err != nil {
-		i.logger.Error(er.ErrListBooking.Error(), zap.Error(err), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
+		i.logger.Error(er.ErrListBooking.Error(), zap.Error(err), zap.Int("start", start), zap.Int("end", end), zap.Any("from", from))
 		return nil, er.ErrListBooking
 	}
 	if len(ret) == 0 {
-		i.logger.Error(er.ErrBookingNotExists.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("user", user))
+		i.logger.Error(er.ErrBookingNotExists.Error(), zap.Int("start", start), zap.Int("end", end), zap.Any("from", from))
 		return nil, er.ErrBookingNotExists
 	}
 
 	return ret, nil
 }
 
-func (i *impl) GetByID(ctx contextx.Contextx, id string, user *user.Profile) (info *pb.OrderInfo, err error) {
-	if len(user.AccessToken) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("user", user))
+func (i *impl) GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *pb.OrderInfo, err error) {
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("from", from))
 		return nil, er.ErrMissingToken
 	}
 
 	if len(id) == 0 {
-		i.logger.Error(er.ErrMissingID.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
 		return nil, er.ErrMissingID
 	}
 
-	ret, err := i.repo.QueryBookings(ctx, user)
+	ret, err := i.repo.QueryBookings(ctx, from)
 	if err != nil {
-		i.logger.Error(er.ErrGetBookingByID.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrGetBookingByID.Error(), zap.Any("from", from))
 		return nil, er.ErrGetBookingByID
 	}
 	if len(ret) == 0 {
-		i.logger.Error(er.ErrBookingNotExists.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrBookingNotExists.Error(), zap.Any("from", from))
 		return nil, er.ErrBookingNotExists
 	}
 
@@ -81,45 +82,45 @@ func (i *impl) GetByID(ctx contextx.Contextx, id string, user *user.Profile) (in
 	return nil, er.ErrBookingNotExists
 }
 
-func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, user *user.Profile) (info *pb.Booking, err error) {
+func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
 	if len(id) == 0 {
-		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("user", user))
+		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("from", from))
 		return nil, er.ErrMissingID
 	}
 
 	if len(projID) == 0 {
-		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("user", user))
+		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("from", from))
 		return nil, er.ErrMissingID
 	}
 
-	if len(user.AccessToken) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error(), zap.String("projID", projID), zap.Any("user", user))
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.String("projID", projID), zap.Any("from", from))
 		return nil, er.ErrMissingToken
 	}
 
-	ret, err := i.repo.Book(ctx, id, projID, user)
+	ret, err := i.repo.Book(ctx, id, projID, from)
 	if err != nil {
-		i.logger.Error(er.ErrBook.Error(), zap.Error(err), zap.String("projID", projID), zap.Any("user", user))
+		i.logger.Error(er.ErrBook.Error(), zap.Error(err), zap.String("projID", projID), zap.Any("from", from))
 		return nil, er.ErrBook
 	}
 
 	return ret, nil
 }
 
-func (i *impl) CancelBooking(ctx contextx.Contextx, id string, user *user.Profile) (err error) {
+func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error) {
 	if len(id) == 0 {
-		i.logger.Error(er.ErrMissingID.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
 		return er.ErrMissingID
 	}
 
-	if len(user.AccessToken) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("user", user))
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("from", from))
 		return er.ErrMissingToken
 	}
 
-	err = i.repo.CancelBooking(ctx, id, user)
+	err = i.repo.CancelBooking(ctx, id, from)
 	if err != nil {
-		i.logger.Error(er.ErrCancelBooking.Error(), zap.Any("user", user))
+		i.logger.Error(er.ErrCancelBooking.Error(), zap.Any("from", from))
 		return er.ErrCancelBooking
 	}
 

@@ -2,6 +2,7 @@ package repo
 
 import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
+	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/google/wire"
@@ -14,7 +15,7 @@ type IRepo interface {
 	QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*pb.OrderInfo, err error)
 
 	// Book serve caller to book a car
-	Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *pb.Booking, err error)
+	Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error)
 
 	// CancelBooking serve caller to cancel a booking by id
 	CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error)
