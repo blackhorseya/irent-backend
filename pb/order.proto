@@ -7,7 +7,7 @@ message OrderInfo {
   string car_id = 2;
   float car_latitude = 3;
   float car_longitude = 4;
-  int64 start_at = 5;
-  int64 end_at = 6;
-  int64 stop_pick_at = 7;
+  string start_at = 5;
+  string end_at = 6;
+  string stop_pick_at = 7;
 }
