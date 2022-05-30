@@ -9,5 +9,8 @@ var (
 	ProjID1 = "P621"
 
 	// Order1 order 1
-	Order1 = &order.Info{No: "H10487753"}
+	Order1 = &order.Info{
+		No:  "H10487753",
+		Car: Car1,
+	}
 )

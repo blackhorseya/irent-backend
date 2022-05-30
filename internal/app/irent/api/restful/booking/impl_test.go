@@ -5,9 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
+	"github.com/blackhorseya/irent/pb"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/mocks"
@@ -64,11 +67,13 @@ func (s *suiteHandler) Test_impl_ListBookings() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
 		{
 			name:     "missing token then error",
 			args:     args{token: ""},
 			wantCode: 401,
+			wantBody: nil,
 		},
 		{
 			name: "list then error",
@@ -76,6 +81,7 @@ func (s *suiteHandler) Test_impl_ListBookings() {
 				s.mock.On("List", mock.Anything, 0, 0, mock.Anything).Return(nil, er.ErrListBooking).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "list then success",
@@ -83,6 +89,7 @@ func (s *suiteHandler) Test_impl_ListBookings() {
 				s.mock.On("List", mock.Anything, 0, 0, mock.Anything).Return([]*order.Info{testdata.Order1}, nil).Once()
 			}},
 			wantCode: 200,
+			wantBody: response.OK.WithData([]*pb.OrderInfo{order.NewOrderInfoResponse(testdata.Order1)}),
 		},
 	}
 	for _, tt := range tests {
@@ -100,7 +107,26 @@ func (s *suiteHandler) Test_impl_ListBookings() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int             `json:"code"`
+				Msg  string          `json:"msg"`
+				Data []*pb.OrderInfo `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "ListBookings() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data) {
+					t.Errorf("ListBookings() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})
@@ -119,16 +145,13 @@ func (s *suiteHandler) Test_impl_GetBookingByID() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
-		{
-			name:     "missing id then error",
-			args:     args{id: "", token: testdata.User1.AccessToken},
-			wantCode: 404,
-		},
 		{
 			name:     "missing token then error",
 			args:     args{id: testdata.User1.ID, token: ""},
 			wantCode: 401,
+			wantBody: nil,
 		},
 		{
 			name: "get by id then error",
@@ -136,6 +159,7 @@ func (s *suiteHandler) Test_impl_GetBookingByID() {
 				s.mock.On("GetByID", mock.Anything, testdata.User1.ID, testdata.User1).Return(nil, er.ErrGetBookingByID).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "get by id then success",
@@ -143,6 +167,7 @@ func (s *suiteHandler) Test_impl_GetBookingByID() {
 				s.mock.On("GetByID", mock.Anything, testdata.User1.ID, testdata.User1).Return(testdata.Order1, nil).Once()
 			}},
 			wantCode: 200,
+			wantBody: response.OK.WithData(order.NewOrderInfoResponse(testdata.Order1)),
 		},
 	}
 	for _, tt := range tests {
@@ -160,7 +185,26 @@ func (s *suiteHandler) Test_impl_GetBookingByID() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int           `json:"code"`
+				Msg  string        `json:"msg"`
+				Data *pb.OrderInfo `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "GetBookingByID() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data) {
+					t.Errorf("GetBookingByID() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})
@@ -180,6 +224,7 @@ func (s *suiteHandler) Test_impl_Book() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
 		{
 			name: "book then error",
@@ -187,6 +232,7 @@ func (s *suiteHandler) Test_impl_Book() {
 				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(nil, er.ErrBook).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "book then success",
@@ -194,6 +240,7 @@ func (s *suiteHandler) Test_impl_Book() {
 				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
 			}},
 			wantCode: 200,
+			wantBody: response.OK.WithData(order.NewBookingResponse(testdata.Booking1)),
 		},
 	}
 	for _, tt := range tests {
@@ -212,7 +259,26 @@ func (s *suiteHandler) Test_impl_Book() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int         `json:"code"`
+				Msg  string      `json:"msg"`
+				Data *pb.Booking `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "Book() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data.(*pb.Booking)) {
+					t.Errorf("Book() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})
@@ -231,16 +297,13 @@ func (s *suiteHandler) Test_impl_CancelBooking() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
-		{
-			name:     "missing id then error",
-			args:     args{id: "", token: testdata.User1.AccessToken},
-			wantCode: 404,
-		},
 		{
 			name:     "missing token then error",
 			args:     args{id: testdata.User1.ID, token: ""},
 			wantCode: 401,
+			wantBody: nil,
 		},
 		{
 			name: "cancel booking then error",
@@ -248,6 +311,7 @@ func (s *suiteHandler) Test_impl_CancelBooking() {
 				s.mock.On("CancelBooking", mock.Anything, testdata.User1.ID, testdata.User1).Return(er.ErrCancelBooking).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "cancel booking then success",
@@ -255,6 +319,7 @@ func (s *suiteHandler) Test_impl_CancelBooking() {
 				s.mock.On("CancelBooking", mock.Anything, testdata.User1.ID, testdata.User1).Return(nil).Once()
 			}},
 			wantCode: 200,
+			wantBody: response.OK.WithData(testdata.User1.ID),
 		},
 	}
 	for _, tt := range tests {
@@ -272,7 +337,26 @@ func (s *suiteHandler) Test_impl_CancelBooking() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int    `json:"code"`
+				Msg  string `json:"msg"`
+				Data string `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "CancelBooking() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data) {
+					t.Errorf("CancelBooking() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})

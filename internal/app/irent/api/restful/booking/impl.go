@@ -5,7 +5,9 @@ import (
 	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	orderE "github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -55,10 +57,15 @@ func (i *impl) ListBookings(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.List(ctx, 0, 0, &user.Profile{AccessToken: token})
+	orders, err := i.biz.List(ctx, 0, 0, &user.Profile{AccessToken: token})
 	if err != nil {
 		_ = c.Error(err)
 		return
+	}
+
+	var ret []*pb.OrderInfo
+	for _, info := range orders {
+		ret = append(ret, orderE.NewOrderInfoResponse(info))
 	}
 
 	c.JSON(http.StatusOK, response.OK.WithData(ret))
@@ -100,7 +107,7 @@ func (i *impl) GetBookingByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.OK.WithData(ret))
+	c.JSON(http.StatusOK, response.OK.WithData(orderE.NewOrderInfoResponse(ret)))
 }
 
 // Book
@@ -138,7 +145,7 @@ func (i *impl) Book(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.OK.WithData(ret))
+	c.JSON(http.StatusOK, response.OK.WithData(orderE.NewBookingResponse(ret)))
 }
 
 // CancelBooking
@@ -149,7 +156,7 @@ func (i *impl) Book(c *gin.Context) {
 // @Produce application/json
 // @Param id path string true "ID of booking"
 // @Security ApiKeyAuth
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.Response{data=string}
 // @Failure 400 {object} er.APPError
 // @Failure 500 {object} er.APPError
 // @Router /v1/bookings/{id} [delete]
@@ -176,5 +183,5 @@ func (i *impl) CancelBooking(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.OK)
+	c.JSON(http.StatusOK, response.OK.WithData(req.ID))
 }
