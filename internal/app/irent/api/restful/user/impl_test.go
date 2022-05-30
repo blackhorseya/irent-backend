@@ -5,22 +5,21 @@ import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
 	"github.com/blackhorseya/gocommon/pkg/response"
+	"github.com/blackhorseya/irent/internal/app/irent/biz/user/mocks"
+	"github.com/blackhorseya/irent/internal/pkg/entity/er"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
+	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/blackhorseya/irent/internal/app/irent/biz/user/mocks"
-	"github.com/blackhorseya/irent/internal/pkg/entity/er"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
-	"go.uber.org/zap"
 )
 
 var (

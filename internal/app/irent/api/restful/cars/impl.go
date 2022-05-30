@@ -1,15 +1,16 @@
 package cars
 
 import (
-	"github.com/blackhorseya/gocommon/pkg/response"
-	"net/http"
-	"strconv"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/car"
+	carE "github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/pb"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
+	"strconv"
 )
 
 type impl struct {
@@ -60,10 +61,15 @@ func (i *impl) NearTopN(c *gin.Context) {
 		return
 	}
 
-	ret, _, err := i.biz.NearTopN(ctx, n, latitude, longitude)
+	cars, _, err := i.biz.NearTopN(ctx, n, latitude, longitude)
 	if err != nil {
 		_ = c.Error(err)
 		return
+	}
+
+	var ret []*pb.Car
+	for _, info := range cars {
+		ret = append(ret, carE.NewCarResponse(info))
 	}
 
 	c.Header("X-Total-Count", strconv.Itoa(n))

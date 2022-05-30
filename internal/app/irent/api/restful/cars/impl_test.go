@@ -1,20 +1,23 @@
 package cars
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
-	"github.com/blackhorseya/irent/internal/pkg/entity/car"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/car/mocks"
+	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
+	"net/http"
+	"net/http/httptest"
+	"reflect"
+	"testing"
 )
 
 type suiteHandler struct {
@@ -25,7 +28,7 @@ type suiteHandler struct {
 }
 
 func (s *suiteHandler) SetupTest() {
-	logger, _ := zap.NewDevelopment()
+	logger := zap.NewNop()
 
 	gin.SetMode(gin.TestMode)
 
@@ -63,21 +66,25 @@ func (s *suiteHandler) Test_impl_NearTopN() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
 		{
 			name:     "n is string then error",
 			args:     args{n: "string", latitude: "0", longitude: "0"},
 			wantCode: 400,
+			wantBody: nil,
 		},
 		{
 			name:     "latitude is string then error",
 			args:     args{n: "10", latitude: "string", longitude: "0"},
 			wantCode: 400,
+			wantBody: nil,
 		},
 		{
 			name:     "longitude is string then error",
 			args:     args{n: "10", latitude: "0", longitude: "string"},
 			wantCode: 400,
+			wantBody: nil,
 		},
 		{
 			name: "near then error",
@@ -85,6 +92,7 @@ func (s *suiteHandler) Test_impl_NearTopN() {
 				s.mock.On("NearTopN", mock.Anything, 10, float64(0), float64(0)).Return(nil, 0, er.ErrListCars).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "near then success",
@@ -92,6 +100,7 @@ func (s *suiteHandler) Test_impl_NearTopN() {
 				s.mock.On("NearTopN", mock.Anything, 10, float64(0), float64(0)).Return([]*car.Info{testdata.Car1}, 5, nil).Once()
 			}},
 			wantCode: 200,
+			wantBody: response.OK.WithData([]*pb.Car{car.NewCarResponse(testdata.Car1)}),
 		},
 	}
 	for _, tt := range tests {
@@ -108,7 +117,26 @@ func (s *suiteHandler) Test_impl_NearTopN() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int       `json:"code"`
+				Msg  string    `json:"msg"`
+				Data []*pb.Car `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "NearTopN() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data) {
+					t.Errorf("NearTopN() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})
