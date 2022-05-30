@@ -5,7 +5,6 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/google/wire"
 )
 
@@ -13,10 +12,10 @@ import (
 //go:generate mockery --name=IBiz
 type IBiz interface {
 	// List serve caller to list all orders
-	List(ctx contextx.Contextx, start, end int, from *user.Profile) (orders []*pb.OrderInfo, err error)
+	List(ctx contextx.Contextx, start, end int, from *user.Profile) (orders []*order.Info, err error)
 
 	// GetByID serve caller to get an order info by id
-	GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *pb.OrderInfo, err error)
+	GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *order.Info, err error)
 
 	// BookCar serve caller to book a car
 	BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error)

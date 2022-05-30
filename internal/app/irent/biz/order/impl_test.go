@@ -8,7 +8,6 @@ import (
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo/mocks"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
@@ -16,13 +15,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type bizSuite struct {
+type suiteBiz struct {
 	suite.Suite
 	mock *mocks.IRepo
 	biz  IBiz
 }
 
-func (s *bizSuite) SetupTest() {
+func (s *suiteBiz) SetupTest() {
 	logger, _ := zap.NewDevelopment()
 
 	s.mock = new(mocks.IRepo)
@@ -34,15 +33,15 @@ func (s *bizSuite) SetupTest() {
 	s.biz = biz
 }
 
-func (s *bizSuite) TearDownTest() {
+func (s *suiteBiz) TearDownTest() {
 	s.mock.AssertExpectations(s.T())
 }
 
-func TestBizSuite(t *testing.T) {
-	suite.Run(t, new(bizSuite))
+func TestSuiteBiz(t *testing.T) {
+	suite.Run(t, new(suiteBiz))
 }
 
-func (s *bizSuite) Test_impl_List() {
+func (s *suiteBiz) Test_impl_List() {
 	type args struct {
 		start int
 		end   int
@@ -52,7 +51,7 @@ func (s *bizSuite) Test_impl_List() {
 	tests := []struct {
 		name       string
 		args       args
-		wantOrders []*pb.OrderInfo
+		wantOrders []*order.Info
 		wantErr    bool
 	}{
 		{
@@ -92,9 +91,9 @@ func (s *bizSuite) Test_impl_List() {
 		{
 			name: "list then success",
 			args: args{start: 0, end: 2, user: testdata.User1, mock: func() {
-				s.mock.On("QueryBookings", mock.Anything, testdata.User1).Return([]*pb.OrderInfo{testdata.Order1}, nil).Once()
+				s.mock.On("QueryBookings", mock.Anything, testdata.User1).Return([]*order.Info{testdata.Order1}, nil).Once()
 			}},
-			wantOrders: []*pb.OrderInfo{testdata.Order1},
+			wantOrders: []*order.Info{testdata.Order1},
 			wantErr:    false,
 		},
 	}
@@ -118,7 +117,7 @@ func (s *bizSuite) Test_impl_List() {
 	}
 }
 
-func (s *bizSuite) Test_impl_GetByID() {
+func (s *suiteBiz) Test_impl_GetByID() {
 	type args struct {
 		id   string
 		user *user.Profile
@@ -127,7 +126,7 @@ func (s *bizSuite) Test_impl_GetByID() {
 	tests := []struct {
 		name     string
 		args     args
-		wantInfo *pb.OrderInfo
+		wantInfo *order.Info
 		wantErr  bool
 	}{
 		{
@@ -161,7 +160,7 @@ func (s *bizSuite) Test_impl_GetByID() {
 		{
 			name: "get by id then success",
 			args: args{id: testdata.Order1.No, user: testdata.User1, mock: func() {
-				s.mock.On("QueryBookings", mock.Anything, testdata.User1).Return([]*pb.OrderInfo{testdata.Order1}, nil).Once()
+				s.mock.On("QueryBookings", mock.Anything, testdata.User1).Return([]*order.Info{testdata.Order1}, nil).Once()
 			}},
 			wantInfo: testdata.Order1,
 			wantErr:  false,
@@ -187,7 +186,7 @@ func (s *bizSuite) Test_impl_GetByID() {
 	}
 }
 
-func (s *bizSuite) Test_impl_BookCar() {
+func (s *suiteBiz) Test_impl_BookCar() {
 	type args struct {
 		id     string
 		projID string
@@ -255,7 +254,7 @@ func (s *bizSuite) Test_impl_BookCar() {
 	}
 }
 
-func (s *bizSuite) Test_impl_CancelBooking() {
+func (s *suiteBiz) Test_impl_CancelBooking() {
 	type args struct {
 		id   string
 		from *user.Profile

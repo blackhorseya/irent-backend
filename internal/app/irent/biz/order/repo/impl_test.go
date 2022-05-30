@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/blackhorseya/gocommon/pkg/contextx"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"github.com/stretchr/testify/suite"
 )
@@ -42,7 +41,7 @@ func (s *suiteRepo) Test_impl_QueryBookings() {
 	tests := []struct {
 		name       string
 		args       args
-		wantOrders []*pb.OrderInfo
+		wantOrders []*order.Info
 		wantErr    bool
 	}{
 		{

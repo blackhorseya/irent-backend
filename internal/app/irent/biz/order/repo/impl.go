@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/base/timex"
+	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"github.com/blackhorseya/irent/pb"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"net/http"
@@ -44,7 +44,7 @@ func NewImpl(o *Options) IRepo {
 	return &impl{o: o}
 }
 
-func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*pb.OrderInfo, err error) {
+func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*order.Info, err error) {
 	url := fmt.Sprintf("%s/BookingQuery", i.o.Endpoint)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
 	if err != nil {
@@ -70,16 +70,25 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders 
 		return nil, errors.New(data.ErrorMessage)
 	}
 
-	var ret []*pb.OrderInfo
+	var ret []*order.Info
 	for _, o := range data.Data.OrderObj {
-		info := &pb.OrderInfo{
-			No:           o.OrderNo,
-			CarId:        strings.ReplaceAll(o.CarNo, " ", ""),
-			CarLatitude:  float32(o.CarLatitude),
-			CarLongitude: float32(o.CarLongitude),
-			StartAt:      timex.ParseString2Time(o.StartTime).UnixNano(),
-			EndAt:        timex.ParseString2Time(o.StopTime).UnixNano(),
-			StopPickAt:   timex.ParseString2Time(o.StopPickTime).UnixNano(),
+		info := &order.Info{
+			No: o.OrderNo,
+			Car: &car.Info{
+				ID:          strings.ReplaceAll(o.CarNo, " ", ""),
+				Type:        "",
+				TypeName:    "",
+				Area:        "",
+				ProjectName: "",
+				ProjectID:   "",
+				Latitude:    o.CarLatitude,
+				Longitude:   o.CarLongitude,
+				Seat:        0,
+				Distance:    0,
+			},
+			StartedAt:  timex.ParseString2Time(o.StartTime),
+			EndAt:      timex.ParseString2Time(o.StopTime),
+			StopPickAt: timex.ParseString2Time(o.StopPickTime),
 		}
 
 		ret = append(ret, info)
