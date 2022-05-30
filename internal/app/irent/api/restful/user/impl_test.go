@@ -1,12 +1,17 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/ginhttp"
+	"github.com/blackhorseya/gocommon/pkg/response"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+	"github.com/blackhorseya/irent/pb"
 	"github.com/blackhorseya/irent/test/testdata"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -32,7 +37,7 @@ type handlerSuite struct {
 }
 
 func (s *handlerSuite) SetupTest() {
-	logger, _ := zap.NewDevelopment()
+	logger := zap.NewNop()
 
 	gin.SetMode(gin.TestMode)
 
@@ -69,16 +74,19 @@ func (s *handlerSuite) Test_impl_Login() {
 		name     string
 		args     args
 		wantCode int
+		wantBody *response.Response
 	}{
 		{
 			name:     "missing id then error",
 			args:     args{id: "", password: pwd1},
 			wantCode: 400,
+			wantBody: nil,
 		},
 		{
 			name:     "missing password then error",
 			args:     args{id: id1, password: ""},
 			wantCode: 400,
+			wantBody: nil,
 		},
 		{
 			name: "login then error",
@@ -86,6 +94,7 @@ func (s *handlerSuite) Test_impl_Login() {
 				s.mock.On("Login", mock.Anything, id1, pwd1).Return(nil, er.ErrLogin).Once()
 			}},
 			wantCode: 500,
+			wantBody: nil,
 		},
 		{
 			name: "login then success",
@@ -93,6 +102,7 @@ func (s *handlerSuite) Test_impl_Login() {
 				s.mock.On("Login", mock.Anything, id1, pwd1).Return(testdata.User1, nil).Once()
 			}},
 			wantCode: 201,
+			wantBody: response.OK.WithData(user.NewProfileResponse(testdata.User1)),
 		},
 	}
 	for _, tt := range tests {
@@ -114,7 +124,26 @@ func (s *handlerSuite) Test_impl_Login() {
 			got := w.Result()
 			defer got.Body.Close()
 
+			type resp struct {
+				Code int         `json:"code"`
+				Msg  string      `json:"msg"`
+				Data *pb.Profile `json:"data"`
+			}
+
+			var gotBody *resp
+			err := json.NewDecoder(got.Body).Decode(&gotBody)
+			if err != nil {
+				t.Errorf("Decode response body error = %v", err)
+				return
+			}
+
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "Login() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
+
+			if 200 <= tt.wantCode && tt.wantCode < 300 {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data.(*pb.Profile)) {
+					t.Errorf("Login() gotBody = %v, want %v", gotBody, tt.wantBody)
+				}
+			}
 
 			s.TearDownTest()
 		})

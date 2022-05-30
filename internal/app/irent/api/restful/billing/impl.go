@@ -1,15 +1,15 @@
 package billing
 
 import (
-	"github.com/blackhorseya/gocommon/pkg/response"
-	"github.com/blackhorseya/irent/internal/pkg/entity/user"
-	"net/http"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
+	_ "github.com/blackhorseya/gocommon/pkg/er" // import er struct
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/billing"
-	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	cer "github.com/blackhorseya/irent/internal/pkg/entity/er"
+	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 type impl struct {
@@ -47,15 +47,15 @@ func (i *impl) GetArrears(c *gin.Context) {
 
 	token, ok := c.MustGet("token").(string)
 	if !ok || len(token) == 0 {
-		i.logger.Error(er.ErrMissingToken.Error())
-		_ = c.Error(er.ErrMissingToken)
+		i.logger.Error(cer.ErrMissingToken.Error())
+		_ = c.Error(cer.ErrMissingToken)
 		return
 	}
 
 	var req reqID
 	if err := c.ShouldBindUri(&req); err != nil {
-		i.logger.Error(er.ErrMissingID.Error(), zap.Error(err))
-		_ = c.Error(er.ErrMissingID)
+		i.logger.Error(cer.ErrMissingID.Error(), zap.Error(err))
+		_ = c.Error(cer.ErrMissingID)
 		return
 	}
 

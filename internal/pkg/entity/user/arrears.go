@@ -6,6 +6,7 @@ type ArrearsRecord struct {
 	TotalAmount int    `json:"total_amount"`
 }
 
+// Arrears declare arrears struct
 type Arrears struct {
 	Records     []*ArrearsRecord `json:"records"`
 	TotalAmount int              `json:"total_amount"`

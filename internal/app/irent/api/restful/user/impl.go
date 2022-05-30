@@ -1,14 +1,14 @@
 package user
 
 import (
-	"github.com/blackhorseya/gocommon/pkg/response"
-	"net/http"
-
 	"github.com/blackhorseya/gocommon/pkg/contextx"
+	"github.com/blackhorseya/gocommon/pkg/response"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
+	userE "github.com/blackhorseya/irent/internal/pkg/entity/user"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 type impl struct {
@@ -59,5 +59,5 @@ func (i *impl) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, response.OK.WithData(ret))
+	c.JSON(http.StatusCreated, response.OK.WithData(userE.NewProfileResponse(ret)))
 }

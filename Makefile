@@ -79,7 +79,7 @@ gen-pb: ## generate protobuf
 
 .PHONY: gen-swagger
 gen-swagger: ## generate swagger spec
-	@swag init -g cmd/$(APP_NAME)/main.go --parseInternal -o api/docs
+	@swag init -g cmd/$(APP_NAME)/main.go --parseInternal --parseDependency --parseDepth 1 -o api/docs
 
 .PHONY: gen-mocks
 gen-mocks: ## generate mocks code via mockery

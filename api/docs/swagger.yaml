@@ -1,17 +1,25 @@
 basePath: /api
 definitions:
-  booking.bookRequest:
+  er.APPError:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest:
     properties:
       id:
         type: string
       project_id:
         type: string
     type: object
-  er.APPError:
+  internal_app_irent_api_restful_booking.bookRequest:
     properties:
-      code:
-        type: integer
-      msg:
+      id:
+        type: string
+      project_id:
         type: string
     type: object
   pb.Arrears:
@@ -33,7 +41,7 @@ definitions:
   pb.Booking:
     properties:
       last_pick_at:
-        type: integer
+        type: string
       "no":
         type: string
     type: object
@@ -69,13 +77,13 @@ definitions:
       car_longitude:
         type: number
       end_at:
-        type: integer
+        type: string
       "no":
         type: string
       start_at:
-        type: integer
+        type: string
       stop_pick_at:
-        type: integer
+        type: string
     type: object
   pb.Profile:
     properties:
@@ -90,8 +98,7 @@ definitions:
     properties:
       code:
         type: integer
-      data:
-        type: object
+      data: {}
       msg:
         type: string
     type: object
@@ -272,7 +279,7 @@ paths:
         name: car
         required: true
         schema:
-          $ref: '#/definitions/booking.bookRequest'
+          $ref: '#/definitions/github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest'
       produces:
       - application/json
       responses:

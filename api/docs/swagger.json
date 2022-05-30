@@ -291,7 +291,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/booking.bookRequest"
+                            "$ref": "#/definitions/github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest"
                         }
                     }
                 ],
@@ -524,7 +524,19 @@
         }
     },
     "definitions": {
-        "booking.bookRequest": {
+        "er.APPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -535,13 +547,13 @@
                 }
             }
         },
-        "er.APPError": {
+        "internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
+                "id": {
+                    "type": "string"
                 },
-                "msg": {
+                "project_id": {
                     "type": "string"
                 }
             }
@@ -575,7 +587,7 @@
             "type": "object",
             "properties": {
                 "last_pick_at": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "no": {
                     "type": "string"
@@ -630,16 +642,16 @@
                     "type": "number"
                 },
                 "end_at": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "no": {
                     "type": "string"
                 },
                 "start_at": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "stop_pick_at": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -663,9 +675,7 @@
                 "code": {
                     "type": "integer"
                 },
-                "data": {
-                    "type": "object"
-                },
+                "data": {},
                 "msg": {
                     "type": "string"
                 }
