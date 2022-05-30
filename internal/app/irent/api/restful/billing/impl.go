@@ -35,12 +35,12 @@ type reqID struct {
 // @Tags Billing
 // @Accept application/json
 // @Produce application/json
+// @Security ApiKeyAuth
 // @Param id path string true "ID of user"
 // @Success 200 {object} response.Response{data=[]pb.Arrears}
 // @Failure 400 {object} er.APPError
 // @Failure 404 {object} er.APPError
 // @Failure 500 {object} er.APPError
-// @Security ApiKeyAuth
 // @Router /v1/billing/{id}/arrears [get]
 func (i *impl) GetArrears(c *gin.Context) {
 	ctx := c.MustGet("ctx").(contextx.Contextx)
@@ -65,5 +65,5 @@ func (i *impl) GetArrears(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.OK.WithData(ret))
+	c.JSON(http.StatusOK, response.OK.WithData(user.NewArrearsResponse(ret)))
 }

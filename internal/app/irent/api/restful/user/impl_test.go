@@ -140,7 +140,7 @@ func (s *handlerSuite) Test_impl_Login() {
 			s.EqualValuesf(tt.wantCode, got.StatusCode, "Login() code = %v, wantCode = %v", got.StatusCode, tt.wantCode)
 
 			if 200 <= tt.wantCode && tt.wantCode < 300 {
-				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data.(*pb.Profile)) {
+				if !reflect.DeepEqual(gotBody.Data, tt.wantBody.Data) {
 					t.Errorf("Login() gotBody = %v, want %v", gotBody, tt.wantBody)
 				}
 			}
