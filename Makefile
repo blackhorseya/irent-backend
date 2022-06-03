@@ -62,7 +62,7 @@ deploy: ## deploy application
 	$(call check_defined,VERSION)
 	$(call check_defined,DEPLOY_TO)
 	@helm --namespace $(NS) \
-	upgrade --install $(APP_NAME) $(HELM_REPO_NAME)/$(APP_NAME) \
+	upgrade --install $(DEPLOY_TO)-$(APP_NAME) $(HELM_REPO_NAME)/$(APP_NAME) \
 	--values ./deployments/configs/$(DEPLOY_TO)/$(APP_NAME).yaml \
 	--set image.tag=$(VERSION)
 
