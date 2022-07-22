@@ -60,14 +60,14 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iRepo := repo.NewImpl(repoOptions)
+	httpClient := restclient.NewClient()
+	iRepo := repo.NewImpl(repoOptions, httpClient)
 	iBiz := car.NewImpl(logger, iRepo)
 	carsIHandler := cars.NewImpl(logger, iBiz)
 	options2, err := repo2.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	httpClient := restclient.NewClient()
 	repoIRepo := repo2.NewImpl(options2, httpClient)
 	userIBiz := user.NewImpl(logger, repoIRepo)
 	userIHandler := user2.NewImpl(logger, userIBiz)
