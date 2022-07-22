@@ -34,6 +34,10 @@ func (s *repoSuite) SetupTest() {
 	s.repo = repo
 }
 
+func (s *repoSuite) TearDownTest() {
+	s.client.AssertExpectations(s.T())
+}
+
 func TestRepoSuite(t *testing.T) {
 	suite.Run(t, new(repoSuite))
 }
@@ -99,6 +103,8 @@ func (s *repoSuite) Test_impl_QueryArrears() {
 			if !reflect.DeepEqual(gotArrears, tt.wantArrears) {
 				t.Errorf("QueryArrears() gotArrears = %v, want %v", gotArrears, tt.wantArrears)
 			}
+
+			s.TearDownTest()
 		})
 	}
 }

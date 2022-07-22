@@ -67,14 +67,14 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	repoIRepo := repo2.NewImpl(options2)
+	httpClient := restclient.NewClient()
+	repoIRepo := repo2.NewImpl(options2, httpClient)
 	userIBiz := user.NewImpl(logger, repoIRepo)
 	userIHandler := user2.NewImpl(logger, userIBiz)
 	options3, err := repo3.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	httpClient := restclient.NewClient()
 	iRepo2 := repo3.NewImpl(options3, httpClient)
 	billingIBiz := billing.NewImpl(logger, iRepo2)
 	billingIHandler := billing2.NewImpl(logger, billingIBiz)

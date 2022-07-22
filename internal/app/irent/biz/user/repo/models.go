@@ -4,8 +4,7 @@ import (
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
 )
 
-// LoginReq declare irent api login request struct
-type LoginReq struct {
+type loginReq struct {
 	IDNO       string `json:"IDNO"`
 	DeviceID   string `json:"DeviceID"`
 	App        string `json:"app"`
@@ -13,8 +12,7 @@ type LoginReq struct {
 	PWD        string `json:"PWD"`
 }
 
-// LoginResp declare irent api login response struct
-type LoginResp struct {
+type loginResp struct {
 	Result       string `json:"Result"`
 	ErrorCode    string `json:"ErrorCode"`
 	NeedRelogin  int    `json:"NeedRelogin"`
@@ -66,7 +64,7 @@ type LoginResp struct {
 	} `json:"Data"`
 }
 
-func newProfileFromResp(resp *LoginResp) *user.Profile {
+func newProfileFromResp(resp *loginResp) *user.Profile {
 	return &user.Profile{
 		ID:          resp.Data.UserData.MEMIDNO,
 		Name:        resp.Data.UserData.MEMCNAME,
