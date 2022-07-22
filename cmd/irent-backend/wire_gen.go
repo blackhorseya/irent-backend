@@ -74,7 +74,8 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iRepo2 := repo3.NewImpl(options3)
+	httpClient := restclient.NewClient()
+	iRepo2 := repo3.NewImpl(options3, httpClient)
 	billingIBiz := billing.NewImpl(logger, iRepo2)
 	billingIHandler := billing2.NewImpl(logger, billingIBiz)
 	options4, err := repo4.NewOptions(viper)

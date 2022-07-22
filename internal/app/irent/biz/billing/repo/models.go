@@ -1,12 +1,10 @@
 package repo
 
-// QueryArrearsReq declare query arrears request struct
-type QueryArrearsReq struct {
+type queryArrearsReq struct {
 	IDNO string `json:"IDNO"`
 }
 
-// QueryArrearsResp declare query arrears response struct
-type QueryArrearsResp struct {
+type queryArrearsResp struct {
 	Result       string `json:"Result"`
 	ErrorCode    string `json:"ErrorCode"`
 	NeedRelogin  int    `json:"NeedRelogin"`
