@@ -12,6 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
+import (
+	_ "github.com/blackhorseya/gocommon/pkg/er"
+)
+
 // Injectors from wire.go:
 
 // CreateIHandler serve caller to create an IHandler
