@@ -1,7 +1,6 @@
 package repo
 
-// QueryBookingsResp declare query bookings response struct
-type QueryBookingsResp struct {
+type queryBookingsResp struct {
 	Result       string `json:"Result"`
 	ErrorCode    string `json:"ErrorCode"`
 	NeedRelogin  int    `json:"NeedRelogin"`
@@ -65,13 +64,11 @@ type QueryBookingsResp struct {
 	} `json:"Data"`
 }
 
-// CancelBookingReq declare cancel booking request struct
-type CancelBookingReq struct {
+type cancelBookingReq struct {
 	OrderNo string `json:"OrderNo"`
 }
 
-// CancelBookingResp declare cancel booking response struct
-type CancelBookingResp struct {
+type cancelBookingResp struct {
 	Result       string `json:"Result"`
 	ErrorCode    string `json:"ErrorCode"`
 	NeedRelogin  int    `json:"NeedRelogin"`
@@ -81,16 +78,14 @@ type CancelBookingResp struct {
 	} `json:"Data"`
 }
 
-// BookReq declare book a car request struct
-type BookReq struct {
+type bookReq struct {
 	ProjID string `json:"ProjID"`
 	EDate  string `json:"EDate"`
 	SDate  string `json:"SDate"`
 	CarNo  string `json:"CarNo"`
 }
 
-// BookResp declare book a car response struct
-type BookResp struct {
+type bookResp struct {
 	Result       string `json:"Result"`
 	ErrorCode    string `json:"ErrorCode"`
 	NeedRelogin  int    `json:"NeedRelogin"`

@@ -82,7 +82,7 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iRepo3 := repo4.NewImpl(options4)
+	iRepo3 := repo4.NewImpl(options4, httpClient)
 	orderIBiz := order.NewImpl(logger, iRepo3)
 	bookingIHandler := booking.NewImpl(logger, orderIBiz)
 	initHandlers := restful.CreateInitHandlerFn(iHandler, carsIHandler, userIHandler, billingIHandler, bookingIHandler)

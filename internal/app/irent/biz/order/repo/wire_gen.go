@@ -7,14 +7,15 @@
 package repo
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
 	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
 // CreateIRepo serve caller to create an IRepo
-func CreateIRepo(o *Options) (IRepo, error) {
-	iRepo := NewImpl(o)
+func CreateIRepo(o *Options, client restclient.HTTPClient) (IRepo, error) {
+	iRepo := NewImpl(o, client)
 	return iRepo, nil
 }
 

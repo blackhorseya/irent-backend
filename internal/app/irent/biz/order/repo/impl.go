@@ -9,9 +9,11 @@ import (
 	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -36,31 +38,37 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 type impl struct {
-	o *Options
+	o      *Options
+	client restclient.HTTPClient
 }
 
 // NewImpl serve caller to create an IRepo
-func NewImpl(o *Options) IRepo {
-	return &impl{o: o}
+func NewImpl(o *Options, client restclient.HTTPClient) IRepo {
+	return &impl{
+		o:      o,
+		client: client,
+	}
 }
 
 func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders []*order.Info, err error) {
-	url := fmt.Sprintf("%s/BookingQuery", i.o.Endpoint)
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
+	uri, err := url.Parse(i.o.Endpoint + "/BookingQuery")
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uri.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := i.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var data *QueryBookingsResp
+	var data *queryBookingsResp
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
@@ -98,23 +106,25 @@ func (i *impl) QueryBookings(ctx contextx.Contextx, from *user.Profile) (orders 
 }
 
 func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
-	url := fmt.Sprintf("%s/Booking", i.o.Endpoint)
-	payload, _ := json.Marshal(&BookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
+	uri, err := url.Parse(i.o.Endpoint + "/Booking")
+	if err != nil {
+		return nil, err
+	}
+	payload, _ := json.Marshal(&bookReq{ProjID: projID, EDate: "", SDate: "", CarNo: id})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uri.String(), bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := i.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var data *BookResp
+	var data *bookResp
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
@@ -131,23 +141,25 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile
 }
 
 func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error) {
-	url := fmt.Sprintf("%s/BookingCancel", i.o.Endpoint)
-	payload, _ := json.Marshal(&CancelBookingReq{OrderNo: id})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
+	uri, err := url.Parse(i.o.Endpoint + "/BookingCancel")
+	if err != nil {
+		return nil
+	}
+	payload, _ := json.Marshal(&cancelBookingReq{OrderNo: id})
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uri.String(), bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := i.client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	var data *CancelBookingResp
+	var data *cancelBookingResp
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return err
