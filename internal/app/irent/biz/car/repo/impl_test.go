@@ -1,10 +1,14 @@
 package repo
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/blackhorseya/irent/internal/pkg/entity/car"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient/mocks"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/mock"
+	"io/ioutil"
+	"net/http"
 	"reflect"
 	"testing"
 
@@ -51,6 +55,19 @@ func (s *repoSuite) Test_impl_List() {
 			name: "call http then error",
 			args: args{mock: func() {
 				s.client.On("Do", mock.Anything).Return(nil, errors.New("error")).Once()
+			}},
+			wantCars: nil,
+			wantErr:  true,
+		},
+		{
+			name: "call http then failed",
+			args: args{mock: func() {
+				data, _ := json.Marshal(&listResp{Errormessage: "failed"})
+				body := ioutil.NopCloser(bytes.NewReader(data))
+				s.client.On("Do", mock.Anything).Return(&http.Response{
+					StatusCode: 200,
+					Body:       body,
+				}, nil)
 			}},
 			wantCars: nil,
 			wantErr:  true,
