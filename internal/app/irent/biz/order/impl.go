@@ -106,6 +106,11 @@ func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Prof
 	return ret, nil
 }
 
+func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
+	// todo: 2022/7/25|sean|impl me
+	panic("implement me")
+}
+
 func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))

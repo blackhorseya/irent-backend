@@ -99,6 +99,29 @@ func (_m *IBiz) List(ctx contextx.Contextx, start int, end int, from *user.Profi
 	return r0, r1
 }
 
+// ReBookCar provides a mock function with given fields: ctx, id, projID, from
+func (_m *IBiz) ReBookCar(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*order.Booking, error) {
+	ret := _m.Called(ctx, id, projID, from)
+
+	var r0 *order.Booking
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *order.Booking); ok {
+		r0 = rf(ctx, id, projID, from)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*order.Booking)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile) error); ok {
+		r1 = rf(ctx, id, projID, from)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewIBiz interface {
 	mock.TestingT
 	Cleanup(func())
