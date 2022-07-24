@@ -106,11 +106,6 @@ func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Prof
 	return ret, nil
 }
 
-func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
-	// todo: 2022/7/25|sean|impl me
-	panic("implement me")
-}
-
 func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
@@ -129,4 +124,35 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profil
 	}
 
 	return nil
+}
+
+func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
+	if len(id) == 0 {
+		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
+		return nil, er.ErrMissingID
+	}
+
+	if len(projID) == 0 {
+		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("from", from))
+		return nil, er.ErrMissingID
+	}
+
+	if len(from.AccessToken) == 0 {
+		i.logger.Error(er.ErrMissingToken.Error(), zap.Any("from", from))
+		return nil, er.ErrMissingToken
+	}
+
+	err = i.repo.CancelBooking(ctx, id, from)
+	if err != nil {
+		i.logger.Error(er.ErrCancelBooking.Error(), zap.Any("from", from))
+		return nil, er.ErrCancelBooking
+	}
+
+	ret, err := i.repo.Book(ctx, id, projID, from)
+	if err != nil {
+		i.logger.Error(er.ErrBook.Error(), zap.Error(err))
+		return nil, er.ErrBook
+	}
+
+	return ret, nil
 }

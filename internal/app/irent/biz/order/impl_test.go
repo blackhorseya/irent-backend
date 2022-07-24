@@ -304,3 +304,83 @@ func (s *suiteBiz) Test_impl_CancelBooking() {
 		})
 	}
 }
+
+func (s *suiteBiz) Test_impl_ReBookCar() {
+	type args struct {
+		id     string
+		projID string
+		from   *user.Profile
+		mock   func()
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantInfo *order.Booking
+		wantErr  bool
+	}{
+		{
+			name:     "if id is empty then error",
+			args:     args{id: "", projID: testdata.ProjID1, from: testdata.User1},
+			wantInfo: nil,
+			wantErr:  true,
+		},
+		{
+			name:     "if projID is empty then error",
+			args:     args{id: testdata.Car1.ID, projID: "", from: testdata.User1},
+			wantInfo: nil,
+			wantErr:  true,
+		},
+		{
+			name:     "if token is empty then error",
+			args:     args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: &user.Profile{}},
+			wantInfo: nil,
+			wantErr:  true,
+		},
+		{
+			name: "cancel booking then error",
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(errors.New("error")).Once()
+			}},
+			wantInfo: nil,
+			wantErr:  true,
+		},
+		{
+			name: "book car then error",
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
+
+				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(nil, errors.New("error")).Once()
+			}},
+			wantInfo: nil,
+			wantErr:  true,
+		},
+		{
+			name: "book car then success",
+			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
+
+				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
+			}},
+			wantInfo: testdata.Booking1,
+			wantErr:  false,
+		},
+	}
+	for _, tt := range tests {
+		s.T().Run(tt.name, func(t *testing.T) {
+			if tt.args.mock != nil {
+				tt.args.mock()
+			}
+
+			gotInfo, err := s.biz.ReBookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ReBookCar() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotInfo, tt.wantInfo) {
+				t.Errorf("ReBookCar() gotInfo = %v, want %v", gotInfo, tt.wantInfo)
+			}
+
+			s.TearDownTest()
+		})
+	}
+}
