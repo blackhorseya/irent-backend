@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"time"
@@ -59,7 +60,7 @@ func (i *impl) Application(app, project, env string) {
 func (i *impl) Start() error {
 	i.logger.Info("runner engine starting...")
 
-	// todo: 2022/7/25|sean|impl me
+	go i.worker()
 
 	return nil
 }
@@ -67,7 +68,38 @@ func (i *impl) Start() error {
 func (i *impl) Stop() error {
 	i.logger.Info("stopping runner engine...")
 
-	// todo: 2022/7/25|sean|impl me
+	i.done <- true
 
 	return nil
+}
+
+func (i *impl) worker() {
+	ticker := time.NewTicker(i.o.Interval)
+
+	for {
+		select {
+		case <-i.done:
+			return
+		case <-ticker.C:
+			i.ExecuteTo()
+		case t := <-i.taskC:
+			err := i.Execute(t)
+			if err != nil {
+				i.logger.Error("executor occurs error", zap.Error(err))
+			}
+		}
+	}
+}
+
+func (i *impl) ExecuteTo() {
+	select {
+	case i.taskC <- time.Now():
+	case <-time.After(50 * time.Millisecond):
+		return
+	}
+}
+
+func (i *impl) Execute(t time.Time) error {
+	// todo: 2022/7/25|sean|impl me
+	return errors.New("impl me")
 }
