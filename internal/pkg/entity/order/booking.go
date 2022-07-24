@@ -9,7 +9,9 @@ import (
 type Booking struct {
 	No         string    `json:"no"`
 	LastPickAt time.Time `json:"last_pick_at"`
-	// todo: 2022/7/25|sean|added fields id and projID
+
+	CarID  string `json:"car_id"`
+	ProjID string `json:"proj_id"`
 }
 
 // NewBookingResponse return *pb.Booking

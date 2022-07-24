@@ -137,6 +137,8 @@ func (i *impl) Book(ctx contextx.Contextx, id, projID string, from *user.Profile
 	return &order.Booking{
 		No:         data.Data.OrderNo,
 		LastPickAt: timex.ParseYYYYMMddHHmmss(data.Data.LastPickTime),
+		CarID:      id,
+		ProjID:     projID,
 	}, nil
 }
 

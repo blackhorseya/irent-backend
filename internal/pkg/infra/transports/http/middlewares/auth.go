@@ -29,7 +29,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// todo: 2021-05-13|11:40|doggy|get by token then set user entity
 		c.Set("token", idTokenHeader[1])
 
 		c.Next()
