@@ -57,11 +57,17 @@ func (i *impl) Application(app, project, env string) {
 }
 
 func (i *impl) Start() error {
-	// TODO implement me
-	panic("implement me")
+	i.logger.Info("runner engine starting...")
+
+	// todo: 2022/7/25|sean|impl me
+
+	return nil
 }
 
 func (i *impl) Stop() error {
-	// TODO implement me
-	panic("implement me")
+	i.logger.Info("stopping runner engine...")
+
+	// todo: 2022/7/25|sean|impl me
+
+	return nil
 }
