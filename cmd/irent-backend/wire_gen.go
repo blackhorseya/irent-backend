@@ -92,7 +92,12 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := irent.New(irentOptions, logger, server)
+	runnerOptions, err := runner.NewOptions(viper, logger)
+	if err != nil {
+		return nil, err
+	}
+	runnerRunner := runner.NewImpl(runnerOptions, logger)
+	application, err := irent.New(irentOptions, logger, server, runnerRunner)
 	if err != nil {
 		return nil, err
 	}

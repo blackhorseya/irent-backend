@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,8 +14,11 @@ import (
 // Application declare application's information
 type Application struct {
 	name       string
+	project    string
+	env        string
 	logger     *zap.Logger
 	httpServer *http.Server
+	runner     runner.Runner
 }
 
 // Option declare application options
@@ -25,6 +29,16 @@ func HTTPServerOption(svr *http.Server) Option {
 	return func(app *Application) error {
 		svr.Application(app.name)
 		app.httpServer = svr
+
+		return nil
+	}
+}
+
+// RunnerOption declare runner engine option
+func RunnerOption(svr runner.Runner) Option {
+	return func(app *Application) error {
+		svr.Application(app.name, app.project, app.env)
+		app.runner = svr
 
 		return nil
 	}
@@ -55,6 +69,13 @@ func (a *Application) Start() error {
 		}
 	}
 
+	if a.runner != nil {
+		err := a.runner.Start()
+		if err != nil {
+			return errors.Wrap(err, "runner engine start error")
+		}
+	}
+
 	return nil
 }
 
@@ -71,6 +92,13 @@ func (a *Application) AwaitSignal() {
 			err := a.httpServer.Stop()
 			if err != nil {
 				a.logger.Warn("stop http server error", zap.Error(err))
+			}
+		}
+
+		if a.runner != nil {
+			err := a.runner.Stop()
+			if err != nil {
+				a.logger.Warn("stop runner engine error", zap.Error(err))
 			}
 		}
 
