@@ -7,6 +7,9 @@ http:
   port: 8080
   mode: debug
 
+runner:
+  interval: 5s
+
 log:
   level: debug
   encoding: console
