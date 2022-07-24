@@ -186,6 +186,5 @@ func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Pr
 }
 
 func (i *impl) ListPremiumBookings(ctx contextx.Contextx) (info map[*user.Profile]*order.Booking, err error) {
-	// todo: 2022/7/25|sean|impl me
-	panic("implement me")
+	return i.premiumBookings, nil
 }
