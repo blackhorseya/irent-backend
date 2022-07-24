@@ -299,7 +299,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest"
+                            "$ref": "#/definitions/internal_app_irent_api_restful_booking.bookRequest"
                         }
                     }
                 ],
@@ -559,10 +559,16 @@ const docTemplate = `{
         "github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
+                "circularly": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "project_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -570,10 +576,16 @@ const docTemplate = `{
         "internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
+                "circularly": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "project_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

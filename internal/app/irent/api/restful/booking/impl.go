@@ -26,15 +26,6 @@ func NewImpl(logger *zap.Logger, biz order.IBiz) IHandler {
 	}
 }
 
-type reqID struct {
-	ID string `uri:"id" binding:"required"`
-}
-
-type bookRequest struct {
-	ID        string `json:"id"`
-	ProjectID string `json:"project_id"`
-}
-
 // ListBookings
 // @Summary List all bookings
 // @Description List all bookings
