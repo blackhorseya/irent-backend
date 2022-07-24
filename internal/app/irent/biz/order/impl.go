@@ -12,13 +12,16 @@ import (
 type impl struct {
 	logger *zap.Logger
 	repo   repo.IRepo
+
+	premiumBookings map[*user.Profile]*order.Booking
 }
 
 // NewImpl serve caller to create an IBiz
 func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
 	return &impl{
-		logger: logger.With(zap.String("type", "OrderBiz")),
-		repo:   repo,
+		logger:          logger.With(zap.String("type", "OrderBiz")),
+		repo:            repo,
+		premiumBookings: make(map[*user.Profile]*order.Booking),
 	}
 }
 
@@ -103,6 +106,8 @@ func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Prof
 		return nil, er.ErrBook
 	}
 
+	// todo: 2022/7/25|sean|if user is premium and enable circularly book then store it
+
 	return ret, nil
 }
 
@@ -155,4 +160,9 @@ func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Pr
 	}
 
 	return ret, nil
+}
+
+func (i *impl) ListPremiumBookings(ctx contextx.Contextx) (info map[*user.Profile]*order.Booking, err error) {
+	// todo: 2022/7/25|sean|impl me
+	panic("implement me")
 }

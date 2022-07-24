@@ -14,6 +14,9 @@ type IBiz interface {
 	// List serve caller to list all orders
 	List(ctx contextx.Contextx, start, end int, from *user.Profile) (orders []*order.Info, err error)
 
+	// ListPremiumBookings serve caller to list premium bookings
+	ListPremiumBookings(ctx contextx.Contextx) (info map[*user.Profile]*order.Booking, err error)
+
 	// GetByID serve caller to get an order info by id
 	GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *order.Info, err error)
 
