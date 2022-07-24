@@ -16,13 +16,13 @@ type IBiz struct {
 	mock.Mock
 }
 
-// BookCar provides a mock function with given fields: ctx, id, projID, from
-func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*order.Booking, error) {
-	ret := _m.Called(ctx, id, projID, from)
+// BookCar provides a mock function with given fields: ctx, id, projID, from, circularly
+func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, from *user.Profile, circularly bool) (*order.Booking, error) {
+	ret := _m.Called(ctx, id, projID, from, circularly)
 
 	var r0 *order.Booking
-	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *order.Booking); ok {
-		r0 = rf(ctx, id, projID, from)
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile, bool) *order.Booking); ok {
+		r0 = rf(ctx, id, projID, from, circularly)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*order.Booking)
@@ -30,8 +30,8 @@ func (_m *IBiz) BookCar(ctx contextx.Contextx, id string, projID string, from *u
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile) error); ok {
-		r1 = rf(ctx, id, projID, from)
+	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile, bool) error); ok {
+		r1 = rf(ctx, id, projID, from, circularly)
 	} else {
 		r1 = ret.Error(1)
 	}

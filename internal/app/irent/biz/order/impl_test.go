@@ -188,10 +188,11 @@ func (s *suiteBiz) Test_impl_GetByID() {
 
 func (s *suiteBiz) Test_impl_BookCar() {
 	type args struct {
-		id     string
-		projID string
-		from   *user.Profile
-		mock   func()
+		id         string
+		projID     string
+		from       *user.Profile
+		circularly bool
+		mock       func()
 	}
 	tests := []struct {
 		name     string
@@ -240,7 +241,7 @@ func (s *suiteBiz) Test_impl_BookCar() {
 				tt.args.mock()
 			}
 
-			gotInfo, err := s.biz.BookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from)
+			gotInfo, err := s.biz.BookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from, tt.args.circularly)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("BookCar() error = %v, wantErr %v", err, tt.wantErr)
 				return

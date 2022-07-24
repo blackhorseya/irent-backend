@@ -130,7 +130,7 @@ func (i *impl) Book(c *gin.Context) {
 		return
 	}
 
-	ret, err := i.biz.BookCar(ctx, data.ID, data.ProjectID, &user.Profile{ID: data.ID, AccessToken: token})
+	ret, err := i.biz.BookCar(ctx, data.ID, data.ProjectID, &user.Profile{ID: data.UserID, AccessToken: token}, data.Circularly)
 	if err != nil {
 		_ = c.Error(err)
 		return

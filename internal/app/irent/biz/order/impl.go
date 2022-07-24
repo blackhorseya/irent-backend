@@ -103,7 +103,7 @@ func (i *impl) GetByID(ctx contextx.Contextx, id string, from *user.Profile) (in
 	return nil, er.ErrBookingNotExists
 }
 
-func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
+func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile, circularly bool) (info *order.Booking, err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.String("projID", projID), zap.Any("from", from))
 		return nil, er.ErrMissingID

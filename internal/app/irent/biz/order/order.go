@@ -21,7 +21,7 @@ type IBiz interface {
 	GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *order.Info, err error)
 
 	// BookCar serve caller to book a car
-	BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error)
+	BookCar(ctx contextx.Contextx, id, projID string, from *user.Profile, circularly bool) (info *order.Booking, err error)
 
 	// CancelBooking serve caller to cancel an order by order's id
 	CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error)
