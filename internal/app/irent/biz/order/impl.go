@@ -6,10 +6,28 @@ import (
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
+type Options struct {
+	People []string `json:"people"`
+}
+
+// NewOptions return *Options
+func NewOptions(v *viper.Viper) (*Options, error) {
+	o := new(Options)
+
+	err := v.UnmarshalKey("premium", &o)
+	if err != nil {
+		return nil, err
+	}
+
+	return o, nil
+}
+
 type impl struct {
+	o      *Options
 	logger *zap.Logger
 	repo   repo.IRepo
 
@@ -17,8 +35,9 @@ type impl struct {
 }
 
 // NewImpl serve caller to create an IBiz
-func NewImpl(logger *zap.Logger, repo repo.IRepo) IBiz {
+func NewImpl(o *Options, logger *zap.Logger, repo repo.IRepo) IBiz {
 	return &impl{
+		o:               o,
 		logger:          logger.With(zap.String("type", "OrderBiz")),
 		repo:            repo,
 		premiumBookings: make(map[*user.Profile]*order.Booking),

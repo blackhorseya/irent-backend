@@ -79,12 +79,16 @@ func CreateApp(path2 string) (*app.Application, error) {
 	iRepo2 := repo3.NewImpl(options3, httpClient)
 	billingIBiz := billing.NewImpl(logger, iRepo2)
 	billingIHandler := billing2.NewImpl(logger, billingIBiz)
+	orderOptions, err := order.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
 	options4, err := repo4.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
 	iRepo3 := repo4.NewImpl(options4, httpClient)
-	orderIBiz := order.NewImpl(logger, iRepo3)
+	orderIBiz := order.NewImpl(orderOptions, logger, iRepo3)
 	bookingIHandler := booking.NewImpl(logger, orderIBiz)
 	initHandlers := restful.CreateInitHandlerFn(iHandler, carsIHandler, userIHandler, billingIHandler, bookingIHandler)
 	engine := http.NewRouter(httpOptions, logger, initHandlers)

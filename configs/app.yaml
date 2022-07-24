@@ -10,6 +10,10 @@ http:
 runner:
   interval: 5s
 
+premium:
+  people:
+    - "C121463993"
+
 log:
   level: debug
   encoding: console

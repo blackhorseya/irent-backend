@@ -11,6 +11,6 @@ import (
 var testProviderSet = wire.NewSet(NewImpl)
 
 // CreateIBiz serve caller to create an IBiz
-func CreateIBiz(logger *zap.Logger, repo repo.IRepo) (IBiz, error) {
+func CreateIBiz(o *Options, logger *zap.Logger, repo repo.IRepo) (IBiz, error) {
 	panic(wire.Build(testProviderSet))
 }

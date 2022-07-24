@@ -25,7 +25,7 @@ func (s *suiteBiz) SetupTest() {
 	logger, _ := zap.NewDevelopment()
 
 	s.mock = new(mocks.IRepo)
-	biz, err := CreateIBiz(logger, s.mock)
+	biz, err := CreateIBiz(&Options{}, logger, s.mock)
 	if err != nil {
 		panic(err)
 	}

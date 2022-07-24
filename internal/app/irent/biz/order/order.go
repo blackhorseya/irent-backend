@@ -31,4 +31,4 @@ type IBiz interface {
 }
 
 // ProviderSet is a provider set for wire
-var ProviderSet = wire.NewSet(NewImpl, repo.ProviderSet)
+var ProviderSet = wire.NewSet(NewImpl, NewOptions, repo.ProviderSet)
