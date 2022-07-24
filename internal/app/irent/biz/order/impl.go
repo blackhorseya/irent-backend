@@ -3,6 +3,7 @@ package order
 import (
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/app/irent/biz/order/repo"
+	"github.com/blackhorseya/irent/internal/pkg/base/stringutils"
 	"github.com/blackhorseya/irent/internal/pkg/entity/er"
 	"github.com/blackhorseya/irent/internal/pkg/entity/order"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
@@ -125,7 +126,10 @@ func (i *impl) BookCar(ctx contextx.Contextx, id, projID string, from *user.Prof
 		return nil, er.ErrBook
 	}
 
-	// todo: 2022/7/25|sean|if user is premium and enable circularly book then store it
+	isPremium := stringutils.ContainsInSlice(i.o.People, from.ID)
+	if isPremium && circularly {
+		i.premiumBookings[from] = ret
+	}
 
 	return ret, nil
 }
