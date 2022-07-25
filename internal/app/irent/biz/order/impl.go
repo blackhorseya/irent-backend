@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Options declare premium configuration
 type Options struct {
 	People []string `json:"people"`
 }
