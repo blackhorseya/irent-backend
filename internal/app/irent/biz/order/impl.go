@@ -154,7 +154,7 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profil
 	return nil
 }
 
-func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error) {
+func (i *impl) ReBookCar(ctx contextx.Contextx, no, id, projID string, from *user.Profile) (info *order.Booking, err error) {
 	if len(id) == 0 {
 		i.logger.Error(er.ErrMissingID.Error(), zap.Any("from", from))
 		return nil, er.ErrMissingID
@@ -170,7 +170,7 @@ func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Pr
 		return nil, er.ErrMissingToken
 	}
 
-	err = i.repo.CancelBooking(ctx, id, from)
+	err = i.repo.CancelBooking(ctx, no, from)
 	if err != nil {
 		i.logger.Error(er.ErrCancelBooking.Error(), zap.Any("from", from))
 		return nil, er.ErrCancelBooking
@@ -181,6 +181,8 @@ func (i *impl) ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Pr
 		i.logger.Error(er.ErrBook.Error(), zap.Error(err))
 		return nil, er.ErrBook
 	}
+
+	i.premiumBookings[from] = ret
 
 	return ret, nil
 }

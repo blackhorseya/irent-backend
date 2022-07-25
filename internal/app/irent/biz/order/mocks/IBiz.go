@@ -122,13 +122,13 @@ func (_m *IBiz) ListPremiumBookings(ctx contextx.Contextx) (map[*user.Profile]*o
 	return r0, r1
 }
 
-// ReBookCar provides a mock function with given fields: ctx, id, projID, from
-func (_m *IBiz) ReBookCar(ctx contextx.Contextx, id string, projID string, from *user.Profile) (*order.Booking, error) {
-	ret := _m.Called(ctx, id, projID, from)
+// ReBookCar provides a mock function with given fields: ctx, no, id, projID, from
+func (_m *IBiz) ReBookCar(ctx contextx.Contextx, no string, id string, projID string, from *user.Profile) (*order.Booking, error) {
+	ret := _m.Called(ctx, no, id, projID, from)
 
 	var r0 *order.Booking
-	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, *user.Profile) *order.Booking); ok {
-		r0 = rf(ctx, id, projID, from)
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, string, string, string, *user.Profile) *order.Booking); ok {
+		r0 = rf(ctx, no, id, projID, from)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*order.Booking)
@@ -136,8 +136,8 @@ func (_m *IBiz) ReBookCar(ctx contextx.Contextx, id string, projID string, from 
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, *user.Profile) error); ok {
-		r1 = rf(ctx, id, projID, from)
+	if rf, ok := ret.Get(1).(func(contextx.Contextx, string, string, string, *user.Profile) error); ok {
+		r1 = rf(ctx, no, id, projID, from)
 	} else {
 		r1 = ret.Error(1)
 	}

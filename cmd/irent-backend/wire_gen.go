@@ -100,7 +100,7 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	runnerRunner := runner.NewImpl(runnerOptions, logger)
+	runnerRunner := runner.NewImpl(runnerOptions, logger, orderIBiz)
 	application, err := irent.New(irentOptions, logger, server, runnerRunner)
 	if err != nil {
 		return nil, err

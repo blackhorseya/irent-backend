@@ -27,7 +27,7 @@ type IBiz interface {
 	CancelBooking(ctx contextx.Contextx, id string, from *user.Profile) (err error)
 
 	// ReBookCar serve caller to rebook car
-	ReBookCar(ctx contextx.Contextx, id, projID string, from *user.Profile) (info *order.Booking, err error)
+	ReBookCar(ctx contextx.Contextx, no, id, projID string, from *user.Profile) (info *order.Booking, err error)
 }
 
 // ProviderSet is a provider set for wire

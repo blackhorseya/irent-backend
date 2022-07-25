@@ -299,7 +299,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_irent_api_restful_booking.bookRequest"
+                            "$ref": "#/definitions/github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest"
                         }
                     }
                 ],

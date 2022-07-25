@@ -1,7 +1,8 @@
 package runner
 
 import (
-	"github.com/pkg/errors"
+	"github.com/blackhorseya/gocommon/pkg/contextx"
+	"github.com/blackhorseya/irent/internal/app/irent/biz/order"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"time"
@@ -34,20 +35,23 @@ type impl struct {
 	project string
 	env     string
 
+	orderBiz order.IBiz
+
 	taskC chan time.Time
 	done  chan bool
 }
 
 // NewImpl return Runner
-func NewImpl(o *Options, logger *zap.Logger) Runner {
+func NewImpl(o *Options, logger *zap.Logger, orderBiz order.IBiz) Runner {
 	return &impl{
-		o:       o,
-		logger:  logger,
-		app:     "",
-		project: "",
-		env:     "",
-		taskC:   make(chan time.Time, 10000),
-		done:    make(chan bool),
+		o:        o,
+		logger:   logger,
+		app:      "",
+		project:  "",
+		env:      "",
+		orderBiz: orderBiz,
+		taskC:    make(chan time.Time, 10000),
+		done:     make(chan bool),
 	}
 }
 
@@ -100,6 +104,21 @@ func (i *impl) ExecuteTo() {
 }
 
 func (i *impl) Execute(t time.Time) error {
-	// todo: 2022/7/25|sean|impl me
-	return errors.New("impl me")
+	ctx := contextx.Background()
+
+	bookings, err := i.orderBiz.ListPremiumBookings(ctx)
+	if err != nil {
+		return err
+	}
+
+	for profile, booking := range bookings {
+		if booking.LastPickAt.Add(-5 * time.Minute).Before(t) {
+			_, err := i.orderBiz.ReBookCar(ctx, booking.No, booking.CarID, booking.ProjID, profile)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

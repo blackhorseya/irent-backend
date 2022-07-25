@@ -308,6 +308,7 @@ func (s *suiteBiz) Test_impl_CancelBooking() {
 
 func (s *suiteBiz) Test_impl_ReBookCar() {
 	type args struct {
+		no     string
 		id     string
 		projID string
 		from   *user.Profile
@@ -339,16 +340,16 @@ func (s *suiteBiz) Test_impl_ReBookCar() {
 		},
 		{
 			name: "cancel booking then error",
-			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(errors.New("error")).Once()
+			args: args{no: testdata.Booking1.No, id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Booking1.No, testdata.User1).Return(errors.New("error")).Once()
 			}},
 			wantInfo: nil,
 			wantErr:  true,
 		},
 		{
 			name: "book car then error",
-			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
+			args: args{no: testdata.Booking1.No, id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Booking1.No, testdata.User1).Return(nil).Once()
 
 				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(nil, errors.New("error")).Once()
 			}},
@@ -357,8 +358,8 @@ func (s *suiteBiz) Test_impl_ReBookCar() {
 		},
 		{
 			name: "book car then success",
-			args: args{id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
-				s.mock.On("CancelBooking", mock.Anything, testdata.Car1.ID, testdata.User1).Return(nil).Once()
+			args: args{no: testdata.Booking1.No, id: testdata.Car1.ID, projID: testdata.ProjID1, from: testdata.User1, mock: func() {
+				s.mock.On("CancelBooking", mock.Anything, testdata.Booking1.No, testdata.User1).Return(nil).Once()
 
 				s.mock.On("Book", mock.Anything, testdata.Car1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
 			}},
@@ -372,7 +373,7 @@ func (s *suiteBiz) Test_impl_ReBookCar() {
 				tt.args.mock()
 			}
 
-			gotInfo, err := s.biz.ReBookCar(contextx.Background(), tt.args.id, tt.args.projID, tt.args.from)
+			gotInfo, err := s.biz.ReBookCar(contextx.Background(), tt.args.no, tt.args.id, tt.args.projID, tt.args.from)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReBookCar() error = %v, wantErr %v", err, tt.wantErr)
 				return
