@@ -113,7 +113,12 @@ func (i *impl) Execute(t time.Time) error {
 
 	for profile, booking := range bookings {
 		if booking.LastPickAt.Add(-5 * time.Minute).Before(t) {
-			_, err := i.orderBiz.ReBookCar(ctx, booking.No, booking.CarID, booking.ProjID, profile)
+			ret, err := i.orderBiz.ReBookCar(ctx, booking.No, booking.CarID, booking.ProjID, profile)
+			if err != nil {
+				return err
+			}
+
+			_, err = i.orderBiz.UpdatePremiumBooking(ctx, profile, ret)
 			if err != nil {
 				return err
 			}

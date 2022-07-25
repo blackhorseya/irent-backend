@@ -17,6 +17,9 @@ type IBiz interface {
 	// ListPremiumBookings serve caller to list premium bookings
 	ListPremiumBookings(ctx contextx.Contextx) (info map[*user.Profile]*order.Booking, err error)
 
+	// UpdatePremiumBooking serve caller to given user and booking to update map
+	UpdatePremiumBooking(ctx contextx.Contextx, from *user.Profile, booking *order.Booking) (info *order.Booking, err error)
+
 	// GetByID serve caller to get an order info by id
 	GetByID(ctx contextx.Contextx, id string, from *user.Profile) (info *order.Info, err error)
 

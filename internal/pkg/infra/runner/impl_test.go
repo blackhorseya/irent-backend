@@ -79,6 +79,23 @@ func (s *SuiteTest) Test_impl_Execute() {
 			wantErr: true,
 		},
 		{
+			name: "rebook then update success",
+			args: args{t: time.Now(), mock: func() {
+				s.orderBiz.On("ListPremiumBookings", mock.Anything).Return(map[*user.Profile]*order.Booking{
+					testdata.User1: {
+						No:         "no1",
+						LastPickAt: time.Now().Add(3 * time.Minute),
+						CarID:      "id1",
+						ProjID:     "proj1",
+					},
+				}, nil).Once()
+
+				s.orderBiz.On("ReBookCar", mock.Anything, "no1", "id1", "proj1", testdata.User1).Return(testdata.Booking1, nil).Once()
+				s.orderBiz.On("UpdatePremiumBooking", mock.Anything, testdata.User1, testdata.Booking1).Return(testdata.Booking1, nil).Once()
+			}},
+			wantErr: false,
+		},
+		{
 			name: "no execute rebook car then nil",
 			args: args{t: time.Now(), mock: func() {
 				s.orderBiz.On("ListPremiumBookings", mock.Anything).Return(map[*user.Profile]*order.Booking{

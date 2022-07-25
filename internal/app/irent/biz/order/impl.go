@@ -182,11 +182,15 @@ func (i *impl) ReBookCar(ctx contextx.Contextx, no, id, projID string, from *use
 		return nil, er.ErrBook
 	}
 
-	i.premiumBookings[from] = ret
-
 	return ret, nil
 }
 
 func (i *impl) ListPremiumBookings(ctx contextx.Contextx) (info map[*user.Profile]*order.Booking, err error) {
 	return i.premiumBookings, nil
+}
+
+func (i *impl) UpdatePremiumBooking(ctx contextx.Contextx, from *user.Profile, booking *order.Booking) (info *order.Booking, err error) {
+	i.premiumBookings[from] = booking
+
+	return booking, nil
 }

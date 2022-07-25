@@ -145,6 +145,29 @@ func (_m *IBiz) ReBookCar(ctx contextx.Contextx, no string, id string, projID st
 	return r0, r1
 }
 
+// UpdatePremiumBooking provides a mock function with given fields: ctx, from, booking
+func (_m *IBiz) UpdatePremiumBooking(ctx contextx.Contextx, from *user.Profile, booking *order.Booking) (*order.Booking, error) {
+	ret := _m.Called(ctx, from, booking)
+
+	var r0 *order.Booking
+	if rf, ok := ret.Get(0).(func(contextx.Contextx, *user.Profile, *order.Booking) *order.Booking); ok {
+		r0 = rf(ctx, from, booking)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*order.Booking)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(contextx.Contextx, *user.Profile, *order.Booking) error); ok {
+		r1 = rf(ctx, from, booking)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewIBiz interface {
 	mock.TestingT
 	Cleanup(func())
