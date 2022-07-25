@@ -23,7 +23,7 @@ func (s *SuiteTest) SetupTest() {
 	logger := zap.NewNop()
 	s.orderBiz = new(mocks.IBiz)
 
-	runner, err := CreateRunner(&Options{}, logger, s.orderBiz)
+	runner, err := CreateRunner(&Options{Shift: 5 * time.Minute}, logger, s.orderBiz)
 	if err != nil {
 		panic(err)
 	}
