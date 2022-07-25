@@ -152,6 +152,12 @@ func (i *impl) CancelBooking(ctx contextx.Contextx, id string, from *user.Profil
 		return er.ErrCancelBooking
 	}
 
+	for profile := range i.premiumBookings {
+		if profile.AccessToken == from.AccessToken {
+			delete(i.premiumBookings, profile)
+		}
+	}
+
 	return nil
 }
 
