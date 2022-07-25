@@ -218,6 +218,7 @@ func (s *suiteHandler) Test_impl_Book() {
 		id     string
 		projID string
 		token  string
+		userID string
 		mock   func()
 	}
 	tests := []struct {
@@ -228,16 +229,16 @@ func (s *suiteHandler) Test_impl_Book() {
 	}{
 		{
 			name: "book then error",
-			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(nil, er.ErrBook).Once()
+			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, userID: testdata.User1.ID, mock: func() {
+				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1, false).Return(nil, er.ErrBook).Once()
 			}},
 			wantCode: 500,
 			wantBody: nil,
 		},
 		{
 			name: "book then success",
-			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, mock: func() {
-				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1).Return(testdata.Booking1, nil).Once()
+			args: args{id: testdata.User1.ID, projID: testdata.ProjID1, token: testdata.User1.AccessToken, userID: testdata.User1.ID, mock: func() {
+				s.mock.On("BookCar", mock.Anything, testdata.User1.ID, testdata.ProjID1, testdata.User1, false).Return(testdata.Booking1, nil).Once()
 			}},
 			wantCode: 200,
 			wantBody: response.OK.WithData(order.NewBookingResponse(testdata.Booking1)),
@@ -250,7 +251,7 @@ func (s *suiteHandler) Test_impl_Book() {
 			}
 
 			uri := fmt.Sprintf("/api/v1/bookings")
-			data, _ := json.Marshal(&bookRequest{ID: tt.args.id, ProjectID: tt.args.projID})
+			data, _ := json.Marshal(&bookRequest{ID: tt.args.id, ProjectID: tt.args.projID, UserID: tt.args.userID})
 			req := httptest.NewRequest(http.MethodPost, uri, bytes.NewBuffer(data))
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tt.args.token))
 			w := httptest.NewRecorder()

@@ -9,13 +9,17 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/api/restful"
 	"github.com/blackhorseya/irent/internal/app/irent/biz"
 	"github.com/blackhorseya/irent/internal/pkg/app"
+	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
+	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
 	"github.com/google/wire"
 )
 
 var providerSet = wire.NewSet(
 	config.ProviderSet,
 	log.ProviderSet,
+	runner.ProviderSet,
+	restclient.ProviderSet,
 	http.ProviderSet,
 	irent.ProviderSet,
 	restful.ProviderSet,

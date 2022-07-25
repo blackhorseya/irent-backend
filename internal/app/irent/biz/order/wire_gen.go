@@ -15,8 +15,8 @@ import (
 // Injectors from wire.go:
 
 // CreateIBiz serve caller to create an IBiz
-func CreateIBiz(logger *zap.Logger, repo2 repo.IRepo) (IBiz, error) {
-	iBiz := NewImpl(logger, repo2)
+func CreateIBiz(o *Options, logger *zap.Logger, repo2 repo.IRepo) (IBiz, error) {
+	iBiz := NewImpl(o, logger, repo2)
 	return iBiz, nil
 }
 

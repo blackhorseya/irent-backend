@@ -9,6 +9,9 @@ import (
 type Booking struct {
 	No         string    `json:"no"`
 	LastPickAt time.Time `json:"last_pick_at"`
+
+	CarID  string `json:"car_id"`
+	ProjID string `json:"proj_id"`
 }
 
 // NewBookingResponse return *pb.Booking

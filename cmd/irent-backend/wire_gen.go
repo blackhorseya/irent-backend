@@ -26,7 +26,9 @@ import (
 	"github.com/blackhorseya/irent/internal/app/irent/biz/user"
 	repo2 "github.com/blackhorseya/irent/internal/app/irent/biz/user/repo"
 	"github.com/blackhorseya/irent/internal/pkg/app"
+	"github.com/blackhorseya/irent/internal/pkg/infra/runner"
 	"github.com/blackhorseya/irent/internal/pkg/infra/transports/http"
+	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
 	"github.com/google/wire"
 )
 
@@ -59,29 +61,34 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	iRepo := repo.NewImpl(repoOptions)
+	httpClient := restclient.NewClient()
+	iRepo := repo.NewImpl(repoOptions, httpClient)
 	iBiz := car.NewImpl(logger, iRepo)
 	carsIHandler := cars.NewImpl(logger, iBiz)
 	options2, err := repo2.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	repoIRepo := repo2.NewImpl(options2)
+	repoIRepo := repo2.NewImpl(options2, httpClient)
 	userIBiz := user.NewImpl(logger, repoIRepo)
 	userIHandler := user2.NewImpl(logger, userIBiz)
 	options3, err := repo3.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	iRepo2 := repo3.NewImpl(options3)
+	iRepo2 := repo3.NewImpl(options3, httpClient)
 	billingIBiz := billing.NewImpl(logger, iRepo2)
 	billingIHandler := billing2.NewImpl(logger, billingIBiz)
+	orderOptions, err := order.NewOptions(viper)
+	if err != nil {
+		return nil, err
+	}
 	options4, err := repo4.NewOptions(viper)
 	if err != nil {
 		return nil, err
 	}
-	iRepo3 := repo4.NewImpl(options4)
-	orderIBiz := order.NewImpl(logger, iRepo3)
+	iRepo3 := repo4.NewImpl(options4, httpClient)
+	orderIBiz := order.NewImpl(orderOptions, logger, iRepo3)
 	bookingIHandler := booking.NewImpl(logger, orderIBiz)
 	initHandlers := restful.CreateInitHandlerFn(iHandler, carsIHandler, userIHandler, billingIHandler, bookingIHandler)
 	engine := http.NewRouter(httpOptions, logger, initHandlers)
@@ -89,7 +96,12 @@ func CreateApp(path2 string) (*app.Application, error) {
 	if err != nil {
 		return nil, err
 	}
-	application, err := irent.New(irentOptions, logger, server)
+	runnerOptions, err := runner.NewOptions(viper, logger)
+	if err != nil {
+		return nil, err
+	}
+	runnerRunner := runner.NewImpl(runnerOptions, logger, orderIBiz)
+	application, err := irent.New(irentOptions, logger, server, runnerRunner)
 	if err != nil {
 		return nil, err
 	}
@@ -98,4 +110,4 @@ func CreateApp(path2 string) (*app.Application, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, http.ProviderSet, irent.ProviderSet, restful.ProviderSet, biz.ProviderSet)
+var providerSet = wire.NewSet(config.ProviderSet, log.ProviderSet, runner.ProviderSet, restclient.ProviderSet, http.ProviderSet, irent.ProviderSet, restful.ProviderSet, biz.ProviderSet)

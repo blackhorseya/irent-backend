@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"github.com/blackhorseya/gocommon/pkg/contextx"
 	"github.com/blackhorseya/irent/internal/pkg/entity/user"
+	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"net/http"
+	"net/url"
 )
 
 // Options declare app's configuration
@@ -32,36 +34,43 @@ func NewOptions(v *viper.Viper) (*Options, error) {
 }
 
 type impl struct {
-	o *Options
+	o      *Options
+	client restclient.HTTPClient
 }
 
 // NewImpl serve caller to create an IRepo
-func NewImpl(o *Options) IRepo {
-	return &impl{o: o}
+func NewImpl(o *Options, client restclient.HTTPClient) IRepo {
+	return &impl{
+		o:      o,
+		client: client,
+	}
 }
 
 func (i *impl) QueryArrears(ctx contextx.Contextx, from *user.Profile) (info *user.Arrears, err error) {
-	url := fmt.Sprintf("%s/ArrearsQuery", i.o.Endpoint)
-	payload, err := json.Marshal(&QueryArrearsReq{IDNO: from.ID})
+	uri, err := url.Parse(i.o.Endpoint + "/ArrearsQuery")
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(payload))
+	body, err := json.Marshal(&queryArrearsReq{IDNO: from.ID})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uri.String(), bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", from.AccessToken))
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := i.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var data *QueryArrearsResp
+	var data *queryArrearsResp
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err

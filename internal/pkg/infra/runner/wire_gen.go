@@ -4,19 +4,19 @@
 //go:build !wireinject
 // +build !wireinject
 
-package repo
+package runner
 
 import (
-	"github.com/blackhorseya/irent/internal/pkg/infra/transports/restclient"
+	"github.com/blackhorseya/irent/internal/app/irent/biz/order"
 	"github.com/google/wire"
+	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-// CreateIRepo serve caller to create an IRepo
-func CreateIRepo(o *Options, client restclient.HTTPClient) (IRepo, error) {
-	iRepo := NewImpl(o, client)
-	return iRepo, nil
+func CreateRunner(o *Options, logger *zap.Logger, orderBiz order.IBiz) (Runner, error) {
+	runner := NewImpl(o, logger, orderBiz)
+	return runner, nil
 }
 
 // wire.go:

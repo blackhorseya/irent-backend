@@ -291,7 +291,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_app_irent_api_restful_booking.bookRequest"
+                            "$ref": "#/definitions/github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest"
                         }
                     }
                 ],
@@ -551,10 +551,16 @@
         "github.com_blackhorseya_irent_internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
+                "circularly": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "project_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -562,10 +568,16 @@
         "internal_app_irent_api_restful_booking.bookRequest": {
             "type": "object",
             "properties": {
+                "circularly": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "project_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
