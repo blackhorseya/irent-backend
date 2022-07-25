@@ -11,6 +11,7 @@ import (
 // Options declare runner configuration
 type Options struct {
 	Interval time.Duration
+	Shift    time.Duration
 }
 
 // NewOptions return *Options
@@ -112,7 +113,7 @@ func (i *impl) Execute(t time.Time) error {
 	}
 
 	for profile, booking := range bookings {
-		if booking.LastPickAt.Add(-5 * time.Minute).Before(t) {
+		if booking.LastPickAt.Add(-i.o.Shift * time.Minute).Before(t) {
 			ret, err := i.orderBiz.ReBookCar(ctx, booking.No, booking.CarID, booking.ProjID, profile)
 			if err != nil {
 				return err
